@@ -27,7 +27,6 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;// 引号去掉，只存内容
-	int             quoted;    // 0=无引号 1=单引号 2=双引号
 	struct s_token	*next;
 }	t_token;
 
