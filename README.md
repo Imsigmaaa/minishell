@@ -2,13 +2,13 @@
 *This project has been created as part of the 42 curriculum by yushli, xingchen.*
 
 
-阶段1 
+##阶段1 
 Lexer 和 parser
-阶段2
+##阶段2
 Expansion + env +heredoc和 executor +pipe + redir 
-阶段3
+##阶段3
 Builtin 和 signal
-阶段4 
+##阶段4 
 Debug
 -----------------------------------------------------------------------------------
 Claude 建议
