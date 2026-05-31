@@ -2,91 +2,145 @@
 *This project has been created as part of the 42 curriculum by yushli, xingchen.*
 
 
-##阶段1 
+# 阶段1 
 Lexer 和 parser
-##阶段2
+# 阶段2
 Expansion + env +heredoc和 executor +pipe + redir 
-##阶段3
+# 阶段3
 Builtin 和 signal
-##阶段4 
+# 阶段4 
 Debug
 -----------------------------------------------------------------------------------
-Claude 建议
+# Claude 建议
 你的计划
 阶段	人A	人B
+
 1	Lexer	Parser
+
 2	Expansion + env	Executor + pipe + redir + heredoc
+
 3	Builtin	Signal
+
 4	一起 Debug	
 ________________________________________
 问题点
+
 阶段2 工作量严重不平衡
+
 Executor + pipe + redir + heredoc 是整个项目最难最大的部分，而 Expansion + env 相对小很多。
+
 建议调整：
+
 阶段2	人A	人B
+
 调整后	Expansion + env + heredoc	Executor + pipe + redir
+
 heredoc 本质是处理输入内容，跟 expansion 更接近，放一起更合理。
+
 ________________________________________
+
 阶段3 也不平衡
+
 Builtin 有 7 个（echo、cd、pwd、export、unset、env、exit），工作量比 signal 大很多。
+
 建议：
+
 阶段3	人A	人B
+
 调整后	Builtin（cd/pwd/export/unset）	Builtin（echo/env/exit）+ Signal
+
 ---------------------------------------------------------------------------------------------------------
+
 重定向
+
 改变命令的输入来源或输出目的地。
+
 ------------------------------------------------------------------------------------------------------------
+
 Lexer
+
 把用户输入的字符串，切成 token 链表。
 
+
 输入 → 输出
+
 输入: echo "hello world" | cat > out.txt
 
 输出:
+
 [WORD:"echo"] → [WORD:"hello world"] → [PIPE] → [WORD:"cat"] → [REDIR_OUT] → [WORD:"out.txt"] → NULL
 
 具体要做的事
+
 1. 跳过空格
+   
 "  echo  hello"  →  不是token，跳过
+
 2. 识别操作符
+   
 |   →  TOKEN_PIPE
+
 <   →  TOKEN_REDIR_IN
+
 >   →  TOKEN_REDIR_OUT
+
 >>  →  TOKEN_REDIR_APPEND
+
 <<  →  TOKEN_HEREDOC
+
 3. 识别普通单词
+   
 echo、hello、-v、foo  →  TOKEN_WORD
-4. 处理引号
+
+5. 处理引号
+   
 "hello world"  →  TOKEN_WORD, value = "hello world"  (引号去掉，空格保留)
+
 '$USER'        →  TOKEN_WORD, value = "$USER"         (引号去掉，内容原样)
 
 --------------------------------------------------------------------------------------------
 
 Parser
+
 把 token 链表，转成 cmd 链表。
 
 输入 → 输出
+
 输入 (来自Lexer):
+
 [WORD:"echo"] → [WORD:"hello"] → [PIPE] → [WORD:"cat"] → [REDIR_OUT] → [WORD:"out.txt"] → NULL
 
 输出:
+
 t_cmd1:                    t_cmd2:
   argv  = ["echo","hello"]   argv  = ["cat"]
   redirs = NULL              redirs = [REDIR_OUT, "out.txt"]
   next  → t_cmd2             next  = NULL
 
 具体要做的事
+
 1. 遇到 WORD → 放进当前 cmd 的 argv
+2. 
 [WORD:"grep"] [WORD:"-v"] [WORD:"foo"]
+
 → argv = ["grep", "-v", "foo", NULL]
-2. 遇到重定向 → 把下一个 WORD 作为文件名，放进 redirs
+
+3. 遇到重定向 → 把下一个 WORD 作为文件名，放进 redirs
+   
 [REDIR_OUT] [WORD:"out.txt"]
+
 → redirs = {type: REDIR_OUT, file: "out.txt"}
-3. 遇到 PIPE → 新建下一个 cmd
+
+4. 遇到 PIPE → 新建下一个 cmd
+   
 [PIPE]
+
 → 当前cmd结束，next指向新cmd
-4. 语法错误检查
+
+5. 语法错误检查
+6. 
 | | |        →  报错，pipe后面不能是pipe
+
 echo >       →  报错，重定向后面没有文件名
 
 
@@ -100,16 +154,23 @@ typedef struct s_cmd {
 } t_cmd;
 
 --------------------------------------------------------------------------------------
+
 Expansion
+
 把 argv 里的 $VAR 替换成真实的值。
 
 输入 → 输出
+
 Parser 输出的 argv:
+
 ["echo", "$USER", "$?", NULL]
 
 Expansion 处理后:
+
 ["echo", "alice", "0", NULL]
+
 具体要做的事
+
 1. $VAR 展开
 bashecho $HOME
 → echo /home/alice
