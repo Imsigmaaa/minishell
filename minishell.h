@@ -31,3 +31,6 @@ typedef struct s_token
 }	t_token;
 
 #endif
+
+
+value1 ="echo"; value ="\'hello world\'"
