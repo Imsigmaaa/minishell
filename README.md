@@ -410,3 +410,86 @@ bash# 执行中忽略或终止
 
 状态ctrl+Cctrl+Dctrl+\等待输入时新提示符退出shell忽略执行命令时终止命令忽略忽略
 
+------------------------------------------------------------------------
+
+Heredoc
+
+从命令行直接输入多行内容，作为命令的输入。
+
+基本用法
+```
+bashcat << EOF
+hello
+world
+bye
+EOF
+`````
+输出:
+```
+hello
+world
+bye
+```
+<< 后面的 EOF 是定界符，遇到它就停止输入。
+
+和 < 的区别
+
+<<<输入来源从文件读从命令行直接输入用法cat < file.txtcat << EOF
+
+定界符可以自己定
+
+bashcat << STOP
+
+hello
+
+STOP
+
+bashcat << ABC
+
+hello
+
+ABC
+
+不一定要叫 EOF，任何单词都可以。
+
+Heredoc 里的变量展开
+
+bashcat << EOF
+
+hello $USER
+
+EOF
+→ hello alice     ← $USER 会被展开
+
+bashcat << 'EOF'
+
+hello $USER
+
+EOF
+
+→ hello $USER     ← 加引号就不展开
+
+在 minishell 里要做什么
+
+1. 识别 << 和定界符（lexer做）
+   
+2. 提示用户输入，读取每一行（heredoc模块做）
+   
+3. 遇到定界符停止
+   
+4. 把内容作为命令的stdin
+
+实际效果
+
+bash# 没有heredoc:
+
+grep hello < file.txt
+
+# 用heredoc:
+```grep hello << EOF
+hello world
+bye
+EOF
+```
+→ 效果一样，只是内容直接在命令行输入
+
