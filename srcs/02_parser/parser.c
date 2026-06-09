@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 21:38:26 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:31:56 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/09 20:35:22 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 #include "../../libft/libft.h"
 
 
-static	int has_valid_command_after_pipe(t_token *tokens)
+/*static	int has_valid_command_after_pipe(t_token *tokens)
 {
 	t_token	*tmp;
-
+	//此函数留到EXECUTOR阶段
 	tmp = tokens->next;
 	if(!tmp)
 		return (0);
@@ -39,24 +39,33 @@ static	int has_valid_command_after_pipe(t_token *tokens)
 		}
 	}
 	return (0);
-}
+}*/
 
 int	process_token(t_cmd **cur_cmd, t_token **cur_tok)
 {
+	//如果是WORD类型
 	if((*cur_tok)->type == TOKEN_WORD)
 	{
+		/*在cmd->argv里面扩容argv,
+		比如之前cmd->argv=｛“echo”,NULL｝,
+		后面遇见“hello”需要追加字符串变成｛“echo”, "\"hello\"",NULL｝以此类推*/
+		//如果追加失败返回0
 		if(!add_arg(*cur_cmd, *cur_tok))
 			return (0);
 	}
+	//如果是PIPE类型
 	else if((*cur_tok)->type == TOKEN_PIPE)
 	{
-		if(!has_valid_command_after_pipe(*cur_tok))
-			return (syntax_error("|"));
 		(*cur_cmd)->next = new_cmd();
 		if(!(*cur_cmd)->next)
 			return(perror("malloc"), 0);
 		*cur_cmd = (*cur_cmd)->next;
 	}
+	/*如果是REDIR类型 
+	标准格式是一个重定向符号 后面跟一个文件名即WORD类型，
+	如果当前类型是REDIR ，但是token->next->type不是WORD类型
+	说明是语法错误，但是此检测已经在syntax_check函数中检查过了。
+	所以REDIR后面肯定是WORD类型，我们这里直接add就可以，如果add失败则返回0*/
 	else
 	{
 		if(!add_redir(*cur_cmd, *cur_tok))
@@ -74,14 +83,19 @@ t_cmd	*parse_tokens(t_token *tokens)
 	
 	if(!tokens)
 		return (NULL);
+	//声明一个cur_tok 用它来参与cmd链表的建立
 	cur_tok = tokens;
+	//声明一个新的cmd节点 new_cmd函数创建节点并且初始化内容为NULL
 	cur_cmd = new_cmd();
+	//如果返回值为null说明malloc失败 要返回因为malloc失败的错误 用perror
 	if(!cur_cmd)
 		return(perror("malloc"), NULL);
+	//cmds链表指向第一个节点
 	cmds = cur_cmd;
-	
+	//开始循环tokens
 	while (cur_tok)
 	{
+		//用process_token函数处理当前token, 用&为了改变外面的指针，如果返回值位0则释放并返回
 		if(!process_token(&cur_cmd, &cur_tok))
 			return(free_cmds(cmds), NULL);
 		cur_tok = cur_tok->next;
