@@ -1,3 +1,124 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/07 21:38:26 by xingchen          #+#    #+#             */
+/*   Updated: 2026/06/09 02:36:29 by xingchen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+//#include "minishell.h"
+
+#include "../../minishell.h"
+#include <string.h>
+
+void	ft_free_arr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+}
+
+void	free_tokens(t_token *tokens)
+{
+	t_token *tmp;
+	
+	while (tokens)
+	{
+		tmp = tokens->next;
+		free(tokens->value);
+		free(tokens);
+		tokens = tmp;
+	}
+}
+
+size_t	ft_arrlen(char **arr)
+{
+	size_t	i;
+
+	i = 0;
+	if(!arr)
+		return (0);
+	while (arr[i])
+		i ++;
+	return i;
+	
+}
+static	int check_word_after_pipe(t_token *tokens)
+{
+	t_token	*tmp;
+
+	tmp = tokens->next;
+	if(!tmp)
+		return (0);
+	while (tmp)
+	{
+		if(tmp->type == TOKEN_PIPE)
+			return (0);
+		else if(tmp->type == TOKEN_WORD)
+			return (1);
+		else
+		{
+			tmp = tmp->next;
+			if(!tmp || tmp->type != TOKEN_WORD)
+				return (0);
+			tmp = tmp->next;
+		}
+	}
+	return (0);
+}
+int	handle_pipe(t_cmd **cmd, t_token *tok)
+{
+	if(!check_word_after_pipe(tok))
+		return (0);
+	(*cmd)->next = new_cmd();
+	if(!(*cmd)->next)
+		return(0);
+	*cmd = (*cmd)->next;
+	return (1);
+}
+
+t_cmd	*parse_tokens(t_token *tokens)
+{
+	t_cmd	*cmds;
+	t_cmd	*cur_cmd;
+	t_token	*cur_tok;
+	
+	if(!tokens)
+		return (NULL);
+	cur_tok = tokens;
+	cur_cmd = new_cmd();
+	if(!cur_cmd)
+		return(perror("malloc"), NULL);
+	cmds = cur_cmd;
+	if(cur_tok->type == TOKEN_PIPE)
+		return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
+	while (cur_tok)
+	{
+		if(cur_tok->type == TOKEN_WORD && !add_arg(cur_cmd, cur_tok))
+				return(free_cmds(cmds), free_tokens(tokens), NULL);
+		else if(cur_tok->type == TOKEN_PIPE && !handle_pipe(&cur_cmd, cur_tok))
+			return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
+		else
+		{
+			if(!cur_tok->next || cur_tok->next->type != TOKEN_WORD)
+				return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
+			if(!add_redir(cur_cmd, cur_tok))
+				return(free_cmds(cmds), free_tokens(tokens), NULL);
+			cur_tok = cur_tok->next;
+		}
+		cur_tok = cur_tok->next;
+	}
+	return (cmds);
+}
+/*
+
 parser 你可以理解成：
 
 lexer 只是把字符串切成 token，parser 是把 token 变成“命令结构体”。
@@ -324,4 +445,4 @@ cmd1:
 cmd2:
   argv: wc -l
 
-这就是 parser 的核心工作。
+这就是 parser 的核心工作。*/
