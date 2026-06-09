@@ -3,19 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:06:26 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/04 14:40:10 by yushan           ###   ########.fr       */
+/*   Updated: 2026/06/09 16:11:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"minishell.h"
 
+t_token *tokenize(char *line)
+{
+	
+}
 void    process_line(t_shell *shell, char *line)
 {
-    tokenize(line);
-    parse_tokens();
+    t_token	*tokens;
+
+	tokens = tokenize(line);
+	if(!syntax_check(tokens))
+	{
+		free_tokens(tokens);
+		return ;
+	}
+    parse_tokens(tokens);
     expand_commands();
     execute_commands(shell);
     cleanup_current_command();

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/31 11:30:01 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 00:47:41 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/09 17:09:42 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
+# include "libft/libft.h"
 /*ENV*/
 typedef struct s_env
 {
@@ -91,11 +91,16 @@ typedef struct s_shell
 t_cmd	*parse_tokens(t_token *token);
 t_cmd	*new_cmd(void);
 void	free_cmds(t_cmd *cmds);
+void	free_tokens(t_token *tokens);
 int	add_arg(t_cmd *cmd, t_token *token);
 int	add_redir(t_cmd *cmd, t_token *tokens);
 size_t	ft_arrlen(char **arr);
 void	ft_free_arr(char **arr);
 void	ft_free_t_redir(t_redir *redirs);
+t_token *tokenize(char *line);
+int	syntax_check(t_token *tokens);
+int	syntax_error(char *token);
+
 #endif
 /*
 typedef enum etoken_type

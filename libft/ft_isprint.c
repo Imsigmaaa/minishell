@@ -1,12 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syntax.c                                           :+:      :+:    :+:   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: xingchen < xingchen@student.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/09 02:37:01 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 02:37:03 by xingchen         ###   ########.fr       */
+/*   Created: 2025/11/10 20:47:13 by xingchen          #+#    #+#             */
+/*   Updated: 2025/11/15 18:00:20 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+
+int	ft_isprint(int c)
+{
+	return (32 <= c && c <= 126);
+}
+/*#include <stdio.h>
+int main(void)
+{
+	printf(" %d",ft_isprint(128));
+}*/

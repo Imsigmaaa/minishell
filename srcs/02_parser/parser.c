@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 21:38:26 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 02:36:29 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/09 17:31:56 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,10 @@
 
 #include "../../minishell.h"
 #include <string.h>
+#include "../../libft/libft.h"
 
-void	ft_free_arr(char **arr)
-{
-	int	i;
 
-	i = 0;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
-}
-
-void	free_tokens(t_token *tokens)
-{
-	t_token *tmp;
-	
-	while (tokens)
-	{
-		tmp = tokens->next;
-		free(tokens->value);
-		free(tokens);
-		tokens = tmp;
-	}
-}
-
-size_t	ft_arrlen(char **arr)
-{
-	size_t	i;
-
-	i = 0;
-	if(!arr)
-		return (0);
-	while (arr[i])
-		i ++;
-	return i;
-	
-}
-static	int check_word_after_pipe(t_token *tokens)
+static	int has_valid_command_after_pipe(t_token *tokens)
 {
 	t_token	*tmp;
 
@@ -73,14 +40,29 @@ static	int check_word_after_pipe(t_token *tokens)
 	}
 	return (0);
 }
-int	handle_pipe(t_cmd **cmd, t_token *tok)
+
+int	process_token(t_cmd **cur_cmd, t_token **cur_tok)
 {
-	if(!check_word_after_pipe(tok))
-		return (0);
-	(*cmd)->next = new_cmd();
-	if(!(*cmd)->next)
-		return(0);
-	*cmd = (*cmd)->next;
+	if((*cur_tok)->type == TOKEN_WORD)
+	{
+		if(!add_arg(*cur_cmd, *cur_tok))
+			return (0);
+	}
+	else if((*cur_tok)->type == TOKEN_PIPE)
+	{
+		if(!has_valid_command_after_pipe(*cur_tok))
+			return (syntax_error("|"));
+		(*cur_cmd)->next = new_cmd();
+		if(!(*cur_cmd)->next)
+			return(perror("malloc"), 0);
+		*cur_cmd = (*cur_cmd)->next;
+	}
+	else
+	{
+		if(!add_redir(*cur_cmd, *cur_tok))
+			return (0);
+		*cur_tok = (*cur_tok)->next;
+	}
 	return (1);
 }
 
@@ -97,22 +79,11 @@ t_cmd	*parse_tokens(t_token *tokens)
 	if(!cur_cmd)
 		return(perror("malloc"), NULL);
 	cmds = cur_cmd;
-	if(cur_tok->type == TOKEN_PIPE)
-		return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
+	
 	while (cur_tok)
 	{
-		if(cur_tok->type == TOKEN_WORD && !add_arg(cur_cmd, cur_tok))
-				return(free_cmds(cmds), free_tokens(tokens), NULL);
-		else if(cur_tok->type == TOKEN_PIPE && !handle_pipe(&cur_cmd, cur_tok))
-			return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
-		else
-		{
-			if(!cur_tok->next || cur_tok->next->type != TOKEN_WORD)
-				return (free_cmds(cmds), free_tokens(tokens),syntax_error(), NULL);
-			if(!add_redir(cur_cmd, cur_tok))
-				return(free_cmds(cmds), free_tokens(tokens), NULL);
-			cur_tok = cur_tok->next;
-		}
+		if(!process_token(&cur_cmd, &cur_tok))
+			return(free_cmds(cmds), NULL);
 		cur_tok = cur_tok->next;
 	}
 	return (cmds);

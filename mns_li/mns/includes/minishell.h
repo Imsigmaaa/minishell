@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/04 14:40:41 by yushan           ###   ########.fr       */
+/*   Updated: 2026/06/09 15:27:09 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_env
     char            *value;
     struct s_env    *next;
 }   t_env;
-
+t_token *tokenize(char *line);
 /*
 原始输入
 → Lexer 生成 token，并保留 quote context
