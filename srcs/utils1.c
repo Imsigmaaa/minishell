@@ -6,11 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 17:04:31 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:06:14 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 21:54:35 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
 size_t	ft_arrlen(char **arr)
 {

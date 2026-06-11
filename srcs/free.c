@@ -6,11 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 17:07:04 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:07:52 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 21:56:14 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
 void	ft_free_arr(char **arr)
 {
@@ -24,7 +24,7 @@ void	ft_free_arr(char **arr)
 	free(arr);
 }
 
-void	free_tokens(t_token *tokens)
+/*void	free_tokens(t_token *tokens)
 {
 	t_token *tmp;
 	
@@ -36,3 +36,4 @@ void	free_tokens(t_token *tokens)
 		tokens = tmp;
 	}
 }
+*/

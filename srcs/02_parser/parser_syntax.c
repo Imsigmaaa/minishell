@@ -6,11 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 02:37:01 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 16:41:51 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 23:15:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "minishell.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -34,7 +34,7 @@ int	syntax_check(t_token *tokens)
 	//开局 "|"立即返回错误 (si le pipe est au debut , on return error imediat)
 	if(toks->type == TOKEN_PIPE)
 		return (syntax_error("|"));
-	while(toks)
+	while(toks && toks->type == TOKEN_EOF)
 	{
 		if (toks->type == TOKEN_WORD)
 			toks = toks->next;

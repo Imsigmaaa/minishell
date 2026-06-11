@@ -6,11 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 17:11:13 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:57:01 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 21:53:57 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 void print_cmds(t_cmd *cmds)
 {

@@ -6,13 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:34:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:31:39 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 22:09:28 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
-#include <string.h>
-#include "../../libft/libft.h"
+#include "minishell.h"
 //声明新的cmd 节点
 t_cmd	*new_cmd(void)
 {

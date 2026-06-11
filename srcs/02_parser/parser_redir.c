@@ -6,13 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 17:31:34 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 21:53:46 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
-#include "../../libft/libft.h"
-#include <string.h>
+#include "minishell.h"
 
 //声明一个新重定向节点并且初始化为NULL；（declarer un nouveau node de redir et init à NULL）
 t_redir	*new_redir(void)

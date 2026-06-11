@@ -6,15 +6,13 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 21:38:26 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/09 20:35:22 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 23:17:27 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 //#include "minishell.h"
 
-#include "../../minishell.h"
-#include <string.h>
-#include "../../libft/libft.h"
+#include "minishell.h"
 
 
 /*static	int has_valid_command_after_pipe(t_token *tokens)
@@ -93,7 +91,7 @@ t_cmd	*parse_tokens(t_token *tokens)
 	//cmds链表指向第一个节点
 	cmds = cur_cmd;
 	//开始循环tokens
-	while (cur_tok)
+	while (cur_tok && cur_tok->type != TOKEN_EOF)
 	{
 		//用process_token函数处理当前token, 用&为了改变外面的指针，如果返回值位0则释放并返回
 		if(!process_token(&cur_cmd, &cur_tok))

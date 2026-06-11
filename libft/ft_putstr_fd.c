@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 20:22:39 by xingchen          #+#    #+#             */
-/*   Updated: 2026/03/20 12:58:02 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/06/11 22:46:50 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	ft_putstr_fd(char *s, int fd)
 {
 	size_t	i;
 
+	if(!s)
+		return ;
 	i = 0;
 	while (s[i])
 		i ++;
