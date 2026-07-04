@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/11 22:09:14 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/04 22:36:02 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,16 @@ typedef struct s_shell
     int         should_exit; // 让 exit builtin 结束主循环
 }   t_shell;
 
+typedef struct s_exec
+{
+	int		cmd_count;
+	int		(*pipe_fd)[2];
+	pid_t	*pids;
+	int		saved_stdin;
+	int		saved_stdout;
+	int		status;
+}	t_exec;
+
 void	print_lexer_error(int err);
 int		add_word_token(t_lexer *lex, char *s, int *i);
 int		add_operator_token(t_lexer *lex, char *s, int *i);
@@ -127,6 +137,10 @@ void	ft_free_t_redir(t_redir *redirs);
 t_token *tokenize(char *line);
 int	syntax_check(t_token *tokens);
 int	syntax_error(char *token);
-
+int	count_cmds(t_cmd *cmds);
+void	exec_single(t_cmd *cmds, t_env *env);
+void	exec_cmd(t_cmd *cmds, t_env *env);
+int		is_builtin(t_cmd *cmd);
+void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
 #endif
 
