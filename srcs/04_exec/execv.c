@@ -117,6 +117,7 @@ int	executor(t_shell *shell, t_cmd *cmds, t_env *env)
 		exec_single(shell,cmds, env);
 	else
 		exec_pipe(shell, cmds, env);
+	return (shell->exit_status);
 	
 }
 /*04_exec
