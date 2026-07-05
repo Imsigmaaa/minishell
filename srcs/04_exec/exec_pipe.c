@@ -116,7 +116,7 @@ void	init_exec(t_exec *exec)
 }
 // Exécute plusieurs commandes avec des pipes.
 // 执行多个带管道的命令。
-void	exec_pipe(t_cmd *cmds, t_env *env)
+void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
 {
 	int		i;
 	t_cmd	*cur;
