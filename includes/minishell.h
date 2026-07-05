@@ -139,10 +139,10 @@ t_token *tokenize(char *line);
 int	syntax_check(t_token *tokens);
 int	syntax_error(char *token);
 int	count_cmds(t_cmd *cmds);
-void	exec_single(t_cmd *cmds, t_env *env);
+void	exec_single(t_shell *shell, t_cmd *cmds, t_env *env);
 void	exec_cmd(t_cmd *cmds, t_env *env);
 int		is_builtin(t_cmd *cmd);
-void	exec_pipe(t_cmd *cmds, t_env *env);
+void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
 int	ft_strcmp(const char *s1, const char *s2);
 #endif
 
