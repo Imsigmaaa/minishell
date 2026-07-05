@@ -106,7 +106,7 @@ executor()
                                     └─────────────────────────┘
 	
 	*/
-int	executor(t_cmd *cmds, t_env *env)
+int	executor(t_shell *shell, t_cmd *cmds, t_env *env)
 {
 	int	n_cmds;
 
@@ -114,9 +114,9 @@ int	executor(t_cmd *cmds, t_env *env)
 	if (!cmds)
 		return (1);
 	if (n_cmds == 1)
-		exec_single(cmds, env);
+		exec_single(shell,cmds, env);
 	else
-		exec_pipe(cmds, env);
+		exec_pipe(shell, cmds, env);
 	
 }
 /*04_exec
