@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/04 22:36:02 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/06 00:58:12 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdio.h>
 # include "../libft/libft.h"
+#include <fcntl.h>
 
 /*ENV*/
 typedef struct s_env
@@ -141,6 +142,7 @@ int	count_cmds(t_cmd *cmds);
 void	exec_single(t_cmd *cmds, t_env *env);
 void	exec_cmd(t_cmd *cmds, t_env *env);
 int		is_builtin(t_cmd *cmd);
-void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
+void	exec_pipe(t_cmd *cmds, t_env *env);
+int	ft_strcmp(const char *s1, const char *s2);
 #endif
 
