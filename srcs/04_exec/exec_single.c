@@ -28,7 +28,7 @@ int	count_cmds(t_cmd *cmds)
 }
 
 //解决单命令问题
-void	exec_single(t_cmd *cmds, t_env *env)
+void	exec_single(t_shell *shell, t_cmd *cmds, t_env *env)
 {
 	
 	pid_t	pid;
