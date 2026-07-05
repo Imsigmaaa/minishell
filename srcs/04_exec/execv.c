@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/04 22:36:48 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/06 00:57:53 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,8 @@ int	executor(t_cmd *cmds, t_env *env)
 		return (1);
 	if (n_cmds == 1)
 		exec_single(cmds, env);
+	else
+		exec_pipe(cmds, env);
 	
 }
 /*04_exec

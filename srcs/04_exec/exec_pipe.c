@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/04 22:29:47 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/06 00:57:39 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,34 @@ cat读完数据通过fd[1][1]将结果写入第二个管道，数据存放在第
 echo écrit son résultat dans le pipe via fd[0][1]. Les données sont stockées dans le buffer du pipe. 
 Ensuite, cat lit ces données via fd[0][0].
 */
+void close_created_fd(t_exec *exec, int created_pipes)
+{
+	int	j;
+	j = 0;
+	while (j < created_pipes)
+	{
+		close(exec->pipe_fd[j][0]);
+		close(exec->pipe_fd[j][1]);
+		j ++;
+	}
+}
+
 static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 {
 	//如果当前是第一个命令
 	// Si c'est la première commande (ex : echo)
+	if (!cmd->redirs)
+	{
 	if(i == 0)
 	{	
 		// La commande écrit dans le premier pipe.
 		// 第一条命令把结果写到第一根管道。
 		if(dup2(exec->pipe_fd[0][1], STDOUT_FILENO) ==-1)
-		// Si dup2 échoue, on ferme tout et on quitte.
+		{// Si dup2 échoue, on ferme tout et on quitte.
 			// 如果 dup2 失败，关闭资源并退出子进程。
-			safe_close_and_exit(exec);
+			close_created_fd(exec, exec->cmd_count - 1);
+			exit(1);
+		}
 	}
 	// Si c'est la dernière commande (ex : wc).
 	// 如果这是最后一条命令（例如：wc）。
@@ -41,7 +57,10 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 		// La commande lit les données depuis le pipe précédent.
 		// 最后一条命令从上一根管道读取数据。
 		if(dup2(exec->pipe_fd[i- 1][0], STDIN_FILENO)== -1)
-			safe_close_and_exit(exec);
+		{
+			close_created_fd(exec, exec->cmd_count - 1);
+			exit(1);
+		}
 	}
 	// Sinon, c'est une commande au milieu (ex : cat).
 	// 否则就是中间命令（例如：cat）。
@@ -54,8 +73,14 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 		// 然后把自己的结果写到下一根管道。。
 		if(dup2(exec->pipe_fd[i - 1][0], STDIN_FILENO) == -1
 		|| dup2(exec->pipe_fd[i][1], STDOUT_FILENO) == -1 )
-			safe_close_and_exit(exec);
+		{
+			close_created_fd(exec, exec->cmd_count - 1);
+			exit(1);
+		}
 	}
+}
+else
+	exec_redir(cmd);
 	// Les redirections sont terminées.
 	// 重定向已经完成。
 
@@ -64,7 +89,14 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 
 	// On les ferme pour éviter les leaks.
 	// 关闭它们，避免文件描述符泄漏。
-	safe_close(exec);
+	/*
+	我们复制cmd_count个进程，每个进程都是从父进程复制而来，
+	在父进程里我们创建了cmds_count-1管道，
+	由于 fork 会复制父进程打开的文件描述符，
+	所以每个子进程里都有cmds_count-1个管道，
+	所以每次dup2要关闭所有管道（不管用到没有）
+	*/
+	close_created_fd(exec, exec->cmd_count - 1);
 	// Exécute réellement la commande.
 	// 真正执行命令。
 
@@ -84,7 +116,7 @@ void	init_exec(t_exec *exec)
 }
 // Exécute plusieurs commandes avec des pipes.
 // 执行多个带管道的命令。
-void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
+void	exec_pipe(t_cmd *cmds, t_env *env)
 {
 	int		i;
 	t_cmd	*cur;
@@ -132,6 +164,7 @@ void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
 		{
 			// Libère la mémoire si pipe échoue.
 			// pipe 创建失败，释放资源。
+			close_created_fd(&exec, i);
 			free(exec.pids);
 			free(exec.pipe_fd);
 			perror("pipe");
@@ -151,7 +184,7 @@ void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
 		// fork 失败。
 		if (exec.pids[i] == -1)
 		{
-			safe_close(&exec);
+			close_created_fd(&exec, exec.cmd_count - 1);
 			free(exec.pids);
 			free(exec.pipe_fd);
 			perror("fork");
@@ -170,7 +203,7 @@ void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
 	}
 	// Le parent n'utilise plus les pipes.
 	// 父进程已经不用 pipe 了。
-	safe_close(&exec);
+	close_created_fd(&exec, exec.cmd_count - 1);
 	i = 0;
 	// Attend tous les processus.
 	// 等待所有子进程结束。
