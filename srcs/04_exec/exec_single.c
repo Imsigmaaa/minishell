@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/04 22:34:11 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/08 20:55:49 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ void	exec_single(t_shell *shell, t_cmd *cmds, t_env *env)
 	int		status;
 	//如果av[0]是builtin则执行builtin函数 不是则执行常规函数
 	if(is_builtin(cmds))
-		return (exec_builtin(cmds, env));//return (exec_external(cmds,env));
-	
-	
+	{
+		shell->exit_status = exec_builtin(cmds, env);
+		return ;
+	}
 	/*fork()复制一个子进程成功的话返回0 
 	失败返回-1，
 	但是父进程成功的话返回的是子进程的PID比如4242
@@ -52,16 +53,32 @@ void	exec_single(t_shell *shell, t_cmd *cmds, t_env *env)
 	if (pid == -1)
 	{
 		perror("fork");
+		shell->exit_status = 1;
+		/*exit_status 保存的是上一条命令的退出码（也就是 echo $? 显示的值）。
+		常见约定是：
+		0：成功
+		1：一般错误（general error）
+		126：找到文件，但不能执行
+		127：命令不存在
+		128 + signal：被信号终止（例如 Ctrl+C）
+		所以：
+		fork()如果失败了，说明这条命令没有成功执行。
+	最常见的做法就是：
+	shell->exit_status = 1;表示"发生了一个普通错误"。*/
 		return ;
 	}	
 	if (pid == 0)
+	{
+		if (cmds->redirs && exec_redir(cmds) == -1)
+			exit(1);
 		exec_cmd(cmds, env);
+	}
 	waitpid(pid, &status, 0);
 	/*status：相当于生成一个条形码（一堆数字） 
 	用WIFEXITED(status)相当于一个扫码枪来验证status，
 	如果是true（比如快递正常送达是true，false是快递异常）*/
 	if(WIFEXITED(status))
-		status = WEXITSTATUS(status);
+		shell->exit_status = WEXITSTATUS(status);
 	return ;
 	/*execve 就三件事：
 去 /bin/ls 把这个程序加载进内存

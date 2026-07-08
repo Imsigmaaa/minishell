@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/05 21:32:17 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/08 23:39:44 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*get_path(char *av, t_env *env)
 	}
 	else
 	{
-		while (tmp && strcmp(tmp->key, "PATH") != 0)//找到key里是PATH的那个节点
+		while (tmp && ft_strcmp(tmp->key, "PATH") != 0)//找到key里是PATH的那个节点
 				tmp = tmp->next;
 		if (!tmp)
 			return (NULL);
@@ -116,13 +116,10 @@ void	exec_cmd(t_cmd *cmds, t_env *env)
 	{
 		ft_printf("minishell: %s: command not found\n", cmds->argv[0]);
 		exit(127);//command no found
-		return ;
 	}
 	envp = env_to_array(env);
 	execve(path, cmds->argv, envp);//如果execve执行成功下面的代码不会执行 反之
 	perror("execve");
 	ft_free_arr(envp);
-	free(path);
-	
 	free(path);
 }

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:54 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/06 00:52:06 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/08 23:52:00 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	handle_heredoc(t_redir *redir)
 	int		hd_fd[2];
 	
 	if(pipe(hd_fd) == -1)
-		return(perror("pipe"), -1);
+		return(-1);
 	// | 的 pipe：一个进程写，另一个进程读。
 	// heredoc<< 的 pipe：shell 写，命令读
 	while (1)

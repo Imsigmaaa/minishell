@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/30 15:11:53 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/08 20:56:05 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,7 @@ char	*get_path(char *av, t_env *env)
 		return (path);
 	}
 }
-void	exec_single(t_cmd *cmds, t_env *env)
+void	exec_single(t_shell *shell,t_cmd *cmds, t_env *env)
 {
 	char	*path;
 	char	**envp;
@@ -303,44 +303,34 @@ void	exec_single(t_cmd *cmds, t_env *env)
 	int		status;
 	if(is_builtin(cmds))
 	{
-		printf("builtin");
-		return ;
-	}
-	path = get_path(cmds->argv[0], env);
-	if (!path)
-	{
-		printf("minishell: %s: command not found\n", cmds->argv[0]);
+		shell->exit_status = exec_builtin(cmds, env);
 		return ;
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
-		free(path);
+		shell->exit_status = 1;
 		return ;
 	}	
 	if (pid == 0)
 	{
-		//envp = env_to_array(env);
-		execve(path, cmds->argv, NULL);
-		perror("execve");
-		ft_free_arr(envp);
-		free(path);
-		exit(127);
+		if (cmds->redirs && exec_redir(cmds) == -1)
+			exit(1);
+		exec_cmd(cmds, env);
 	}
-	free(path);
 	waitpid(pid, &status, 0);
 	if(WIFEXITED(status))
-		status = WEXITSTATUS(status);
+		shell->exit_status = WEXITSTATUS(status);
 	return ;
 
 }
-int	executor(t_cmd *cmds, t_env *env)
+int	executor(t_shell *shell,t_cmd *cmds, t_env *env)
 {
 	if (!cmds)
 		return (1);
 	if (count_cmds(cmds) == 1)
-		exec_single(cmds, env);
+		exec_single(shell,cmds, env);
 	return 0;
 }
 

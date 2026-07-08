@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/06 00:57:39 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/08 23:43:57 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 {
 	//如果当前是第一个命令
 	// Si c'est la première commande (ex : echo)
-	if (!cmd->redirs)
-	{
 	if(i == 0)
 	{	
 		// La commande écrit dans le premier pipe.
@@ -78,9 +76,6 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 			exit(1);
 		}
 	}
-}
-else
-	exec_redir(cmd);
 	// Les redirections sont terminées.
 	// 重定向已经完成。
 
@@ -96,7 +91,14 @@ else
 	所以每个子进程里都有cmds_count-1个管道，
 	所以每次dup2要关闭所有管道（不管用到没有）
 	*/
+	if (cmd->redirs && exec_redir(cmd) == -1)
+	{
+    	close_created_fd(exec, exec->cmd_count - 1);
+    	exit(1);
+	}
 	close_created_fd(exec, exec->cmd_count - 1);
+	if (is_builtin(cmd))
+    	exit(exec_builtin(cmd, env));
 	// Exécute réellement la commande.
 	// 真正执行命令。
 
