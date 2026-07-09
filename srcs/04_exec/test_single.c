@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/08 20:56:05 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/09 13:17:04 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,4 +343,41 @@ int main(void)
 	cmd.next = NULL;
 
 	executor(&cmd, NULL);
-}
+}/*
+
+echo hello | grep hello > out.txt
+
+cmd1 = echo hello
+cmd2 = grep hello > out.txt
+
+exec_pipe()
+      │
+	fork()
+   ┌──┴──┐
+Child1  Child2
+   │        │
+builtin   dup2()
+           │
+        exec_redir()
+          │
+         exec_cmd()
+
+
+
+
+
+
+Child 1                    Child 2
+┌──────────┐      pipe      ┌────────────────────────┐
+│ echo     │ ─────────────▶ │ grep hello            │
+│ builtin  │                │ exec_redir()          │
+└──────────┘                │ exec_cmd()            │
+                            └────────────────────────┘
+                                     │
+                                     ▼
+                                  out.txt
+
+
+
+
+								  */
