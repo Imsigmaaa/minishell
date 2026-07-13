@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/08 23:39:44 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/13 23:33:49 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	is_builtin(t_cmd *cmd)
 	return (0);
 }
 //遍历所有路径找到可执行命令路径
-char	*find_valid_path(char *av, char **all_paths)
+static	char	*find_valid_path(char *av, char **all_paths)
 {
 	int	i;
 	char *new_path;
@@ -75,7 +75,7 @@ char	*find_valid_path(char *av, char **all_paths)
 	return (NULL);//找不到返回NULL
 }
 //得到可执行路径
-char	*get_path(char *av, t_env *env)
+static	char	*get_path(char *av, t_env *env)
 {
 	int		i;
 	char	*path;
