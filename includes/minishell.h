@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/22 13:04:13 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 15:23:05 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@
 # include "../libft/libft.h"
 #include <fcntl.h>
 #include <sys/stat.h>
+# include <sys/wait.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 /*ENV*/
 typedef struct s_env
@@ -183,6 +186,8 @@ int				exec_redir(t_cmd *cmd);
 /* ************************************************************************** */
 
 int				is_builtin(t_cmd *cmd);
+int				exec_builtin(t_shell *shell, t_cmd *cmd);
+
 
 /* ************************************************************************** */
 /*                                   UTILS                                    */
@@ -191,6 +196,7 @@ int				is_builtin(t_cmd *cmd);
 size_t			ft_arrlen(char **arr);
 void			ft_free_arr(char **arr);
 int				ft_strcmp(const char *s1, const char *s2);
+void			update_exit_status(t_shell *shell, int status);
 /*void	print_lexer_error(int err);
 int		add_word_token(t_lexer *lex, char *s, int *i);
 int		add_operator_token(t_lexer *lex, char *s, int *i);

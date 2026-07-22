@@ -6,85 +6,37 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/22 12:45:41 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 17:16:08 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_cmds(t_cmd *cmds)
-{
-	t_cmd	*tmp;
-	int		count;
-
-	tmp = cmds;
-	count = 0;
-	while (tmp)
-	{
-		tmp = tmp->next;
-		count ++;
-	}
-	return (count);
-}
-
-void	update_exit_status(t_shell *shell, int status)
-{
-	//如果子进程是正常结束的(只要子进程是通过 exit()
-	//或者 return 从 main 返回，本质上也会调用 exit结束的，就属于正常结束（WIFEXITED）)
-	if (WIFEXITED(status))
-		//取出真正的退出码
-		shell->exit_status = WEXITSTATUS(status);
-	//子进程是不是被信号杀死了？(Ctrl+C（SIGINT）||kill -9||段错误（SIGSEGV）)
-	else if(WIFSIGNALED(status))
-		shell->exit_status = 128 + WTERMSIG(status);//WTERMSIG(status) —— 是取具体信号编号(问的是"被哪个信号杀死的?",比如 SIGINT=2, SIGSEGV=11)
-		/*WIFSTOPPED(status) 进程没有死，只是暂停了。
-		WIFCONTINUED(status) 暂停后继续
-		属于Job Control（作业控制）
-		
-		
-		例如 subject 要求：
-
-Ctrl+C
-Ctrl+\
-Ctrl+D
-pipes
-redirections
-heredoc
-builtins
-$?
-
-但是没有要求实现：
-
-jobs
-fg
-bg
-&（后台运行）
-Ctrl+Z 的作业控制
-
-也没有提到需要处理进程暂停或继续*/
-}
 //处理 builtin 命令 + 可能存在的重定向
 //因为 builtin 是在 shell 自己的进程里执行的（没有 fork）
 //如果不手动保存/恢复 fd，重定向一旦发生就会永久性地
 //把 shell 自身的 stdout/stdin 改掉，导致之后所有输出都跑偏
-static	void	exec_builtin_with_redir(t_shell *shell)
+static	int	saved_stdio(int	*saved_stdin, int *saved_stdout)
 {
-	int	saved_stdout;
-	int	saved_stdin;
-
 	//在动 fd 之前，先把原始的 stdout / stdin 复制一份备份起来
 	//相当于"多接一根备用水管"，等下要用它把水管接回终端
-	saved_stdout = dup(STDOUT_FILENO);
+	*saved_stdin = dup(STDIN_FILENO);
 	//dup(oldfd) —— 自动找一个新的空闲 fd 来复制;意思是:"复制一份 fd 1(stdout)的内容,系统随便挑一个空闲的号,比如挑中了 fd 3,那么 saved_stdout 里存的值就是 3"。
-	saved_stdin = dup(STDIN_FILENO);
-	//如果这条命令带重定向，就执行重定向（会把 fd 改接到文件上）
-	//如果重定向失败，直接标记退出码为 1，不再执行 builtin
-	if (shell->cmds->redirs && exec_redir(shell->cmds) == -1)
-        shell->exit_status = 1;
-    //没有重定向，或者重定向成功，就正常执行 builtin
-	//exec_builtin 内部写的东西，此时会流向重定向指定的文件
-	else
-		shell->exit_status = exec_builtin(shell);
+	*saved_stdout = dup(STDOUT_FILENO);
+	if(*saved_stdout == -1 || *saved_stdin == -1)
+	{
+		perror("dup");
+		if (*saved_stdout >= 0)
+			close(*saved_stdout);
+		if (*saved_stdin >= 0)
+			close(*saved_stdin);
+		return (0);
+	}
+	return (1);
+}
+
+static	void	restore_stdio(int	saved_stdin, int saved_stdout)
+{
 	//不管上面走了哪条路径，执行完都要把 fd 改回来
 	//用备份的 fd 覆盖回 STDOUT_FILENO / STDIN_FILENO
 	//相当于把水管重新接回终端
@@ -94,17 +46,54 @@ static	void	exec_builtin_with_redir(t_shell *shell)
 	close(saved_stdout);
 	close(saved_stdin);
 }
+
+static	void	exec_parent_action(t_shell *shell)
+{
+	int	redir_status;
+	
+	redir_status = 0;//初始化为0
+	if (shell->cmds->redirs)//如果有重定向得到重定向状态status
+		redir_status = exec_redir(shell->cmds);
+	if (redir_status == -1)
+    {
+		shell->exit_status = 1;//检查重定向是否失败，失败就停止
+		return ;
+	}
+	//检查有没有命令
+	if (!shell->cmds->argv || !shell->cmds->argv[0])
+	{
+		shell->exit_status = 0;//重定向成功，但没有命令，所以状态为 0
+		return ;//返回
+	}
+	//如果前面没有重定向或者重定向成功且有命令 则执行builtin
+	shell->exit_status = exec_builtin(shell, shell->cmds);
+}
+
+static	void	exec_in_parent(t_shell *shell)
+{
+	int	saved_stdin;
+	int	saved_stdout;
+
+	if (!saved_stdio(&saved_stdin, &saved_stdout))
+	{	
+		shell->exit_status = 1;
+		return ;
+	}
+	exec_parent_action(shell);
+	restore_stdio(saved_stdin, saved_stdout);
+}
+
 //解决单命令问题
 void	exec_single(t_shell *shell)
 {
 	
 	pid_t	pid;
 	int		status;
-	//如果av[0]是builtin则执行builtin函数 不是则执行常规函数
-	if(is_builtin(shell->cmds))
+	//没有命令但可能只有重定向或者是builtin
+	if (!shell->cmds->argv || !shell->cmds->argv[0] || is_builtin(shell->cmds))
 	{
-		exec_builtin_with_redir(shell);
-		return ;//return (exec_external(cmds,env));
+		exec_in_parent(shell);
+		return ;
 	}
 	/*fork()复制一个子进程成功的话返回0 
 	失败返回-1，
@@ -140,7 +129,12 @@ void	exec_single(t_shell *shell)
 			exit(1);
 		exec_cmd(shell->cmds, shell->env);
 	}
-	waitpid(pid, &status, 0);
+	if (waitpid(pid, &status, 0) == -1)
+	{
+		perror("waitpid");
+		shell->exit_status = 1;
+		return ;
+	}
 	/*status：相当于生成一个条形码（一堆数字） 
 	用WIFEXITED(status)相当于一个扫码枪来验证status，
 	如果是true（比如快递正常送达是true，false是快递异常）*/

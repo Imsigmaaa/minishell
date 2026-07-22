@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/15 16:11:26 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 15:16:37 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	dup_pipe_fd(int i, t_exec *exec)
 	}
 	return (1);
 }
-static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
+static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 {
 	int	status;
 	// Si dup2 échoue, on ferme tout ,free tout et on quitte.
@@ -89,7 +89,7 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 	*/
 	close_created_fd(exec, exec->cmd_count - 1);
 	if (is_builtin(cmd))
-    {	status = exec_builtin(cmd, env);
+    {	status = exec_builtin(shell, cmd);
 		free_exec(exec);
 		exit(status);
 	}
@@ -98,7 +98,7 @@ static void	exec_child(t_cmd *cmd, t_env *env, int i, t_exec *exec)
 
 	// Soit un builtin, soit execve pour une commande externe.
 	// 如果是 builtin 就执行 builtin，否则调用 execve 执行外部命令。
-	exec_cmd(cmd, env);
+	exec_cmd(cmd, shell->env);
 	exit(126);
 }
 
@@ -159,7 +159,7 @@ static	int	fork_children(t_shell *shell, t_exec *exec)
 		if (exec->pids[i] == 0)
 			// Configure les pipes puis exécute la commande.
 			// 设置 pipe，然后执行命令。
-			exec_child(cur, shell->env, i, exec);
+			exec_child(shell,cur, i, exec);
 		// Passe à la commande suivante.
 		// 移动到下一条命令。
 		cur = cur->next;
