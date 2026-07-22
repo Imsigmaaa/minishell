@@ -1,6 +1,37 @@
 
 *This project has been created as part of the 42 curriculum by yushli, xingchen.*
 
+cmd2 = grep hello > out.txt
+## instrustion
+
+```text
+Command:
+echo hello | grep hello > out.txt
+Parser result:
+cmd1: argv = ["echo", "hello"]
+      redirs = NULL
+cmd2: argv = ["grep", "hello"]
+      redirs = [TOKEN_REDIR_OUT -> "out.txt"]
+Execution:
+
+exec_pipe() → count_cmds() → cmd_count = 2 → create pipes → fork()
+                                                             │
+                                       ┌─────────────────────┴─────────────────────┐
+                                       ▼                                           ▼
+                       		 +--------------------+                     +------------------------+
+                       		 |      Child 1       | ====== pipe =====▶ |       Child 2         |
+                       		 |--------------------|                     |------------------------|
+                       		 | dup2(STDOUT)       |                     | dup2(STDIN)           |
+                       		 | close pipes        |                     | exec_redir(>out.txt)  |
+                       		 | exec_builtin(echo) |                     | close pipes           |
+                       		 +--------------------+                     | exec_cmd(grep)        |
+                       		                                            +-----------+------------+
+                       		                                                        │
+                       		                                                        ▼
+                       		                                                     out.txt
+
+                                      Parent ───────────── waitpid(all children)
+```
 
 # 阶段1 
 Lexer 和 parser

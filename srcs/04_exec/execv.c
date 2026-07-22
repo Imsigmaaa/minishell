@@ -6,11 +6,47 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/06 00:57:53 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 12:47:15 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	executor(t_shell *shell)
+{
+	int	n_cmds;
+
+	if (!shell->cmds)
+		return (1);
+	n_cmds = count_cmds(shell->cmds);
+	if (n_cmds == 1)
+		exec_single(shell);
+	else
+		exec_pipe(shell);
+	return (shell->exit_status);
+	
+}
+
+int	main(void)
+{
+	t_env env;
+	t_shell shell;
+	
+	env.key = "PATH";
+	env.value = "/usr/local/bin:/usr/bin:/bin";
+	env.next = NULL;
+
+}
+/*04_exec
+├── executor.c        # 执行入口：判断单命令 / 多管道
+├── exec_cmd.c        # 执行一个 command
+├── exec_path.c       # 找 PATH，拼接可执行路径
+├── exec_pipe.c       # 多个 pipe 的创建、fork、dup2
+├── exec_redir.c      # 执行重定向 < > >>
+├── exec_heredoc.c    # heredoc <<
+├── exec_utils.c      # exec 辅助函数
+└── exec_error.c      # exec 错误打印*/
+
 /*
 遍历每个 cmd
         ↓
@@ -106,26 +142,3 @@ executor()
                                     └─────────────────────────┘
 	
 	*/
-int	executor(t_shell *shell, t_cmd *cmds, t_env *env)
-{
-	int	n_cmds;
-
-	n_cmds = count_cmds(cmds);
-	if (!cmds)
-		return (1);
-	if (n_cmds == 1)
-		exec_single(shell,cmds, env);
-	else
-		exec_pipe(shell, cmds, env);
-	return (shell->exit_status);
-	
-}
-/*04_exec
-├── executor.c        # 执行入口：判断单命令 / 多管道
-├── exec_cmd.c        # 执行一个 command
-├── exec_path.c       # 找 PATH，拼接可执行路径
-├── exec_pipe.c       # 多个 pipe 的创建、fork、dup2
-├── exec_redir.c      # 执行重定向 < > >>
-├── exec_heredoc.c    # heredoc <<
-├── exec_utils.c      # exec 辅助函数
-└── exec_error.c      # exec 错误打印*/

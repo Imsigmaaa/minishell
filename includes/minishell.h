@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/13 23:55:48 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 13:04:13 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <stdio.h>
 # include "../libft/libft.h"
 #include <fcntl.h>
+#include <sys/stat.h>
 
 /*ENV*/
 typedef struct s_env
@@ -99,7 +100,7 @@ typedef struct s_shell
 {
     t_env       *env;
     t_token     *tokens;
-    t_cmd       *commands;
+    t_cmd       *cmds;
     int         exit_status; //保存 $? 的值 : 最近一次执行完成的前台命令或前台 pipeline 的退出状态
     int         should_exit; // 让 exit builtin 结束主循环
 }   t_shell;
@@ -154,19 +155,20 @@ void			ft_free_t_redir(t_redir *redirs);
 /* ************************************************************************** */
 
 int				count_cmds(t_cmd *cmds);
-void			exec_single(t_shell *shell, t_cmd *cmds, t_env *env);
+void			exec_single(t_shell *shell);
 void			exec_cmd(t_cmd *cmds, t_env *env);
-void			exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
+void			exec_pipe(t_shell *shell);
 
 /* ************************************************************************** */
 /*                              PIPE EXECUTION                                */
 /* ************************************************************************** */
 
 void			init_exec(t_exec *exec);
-int				init_exec_data(t_shell *shell, t_exec *exec, t_cmd *cmds);
+int				init_exec_data(t_shell *shell, t_exec *exec);
 int				create_pipes(t_shell *shell, t_exec *exec);
 void			close_created_fd(t_exec *exec, int created_pipes);
 void			free_exec(t_exec *exec);
+int				executor(t_shell *shell);
 
 /* ************************************************************************** */
 /*                               REDIRECTIONS                                 */

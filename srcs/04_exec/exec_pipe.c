@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/13 23:37:18 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/15 16:11:26 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,13 +132,13 @@ static	void	wait_all_childs(t_shell *shell, t_exec *exec, int count)
 		shell->exit_status = 1;
 	return ;
 }
-static	int	fork_children(t_shell *shell, t_exec *exec, t_cmd *cmds, t_env *env)
+static	int	fork_children(t_shell *shell, t_exec *exec)
 {
 	int		i;
 	t_cmd	*cur;
 	
 	i = 0;
-	cur = cmds;
+	cur = shell->cmds;
 	// Crée un processus pour chaque commande.
 	// 每条命令创建一个子进程。
 	while (i < exec->cmd_count)
@@ -159,7 +159,7 @@ static	int	fork_children(t_shell *shell, t_exec *exec, t_cmd *cmds, t_env *env)
 		if (exec->pids[i] == 0)
 			// Configure les pipes puis exécute la commande.
 			// 设置 pipe，然后执行命令。
-			exec_child(cur, env, i, exec);
+			exec_child(cur, shell->env, i, exec);
 		// Passe à la commande suivante.
 		// 移动到下一条命令。
 		cur = cur->next;
@@ -170,18 +170,18 @@ static	int	fork_children(t_shell *shell, t_exec *exec, t_cmd *cmds, t_env *env)
 
 // Exécute plusieurs commandes avec des pipes.
 // 执行多个带管道的命令。
-void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env)
+void	exec_pipe(t_shell *shell)
 {
 	t_exec	exec;
 	//初始化exec数据，创建所有pipes
-	if (!init_exec_data(shell,&exec, cmds) || !create_pipes(shell, &exec))
+	if (!init_exec_data(shell, &exec) || !create_pipes(shell, &exec))
 	{
 		//如果出错释放exec
 		free_exec(&exec);
 		return ;//父进程直接返回
 	}
 	//fork子进程
-	if (!fork_children(shell, &exec, cmds, env))
+	if (!fork_children(shell, &exec))
 	{
 		//如果出错释放exec
 		free_exec(&exec);

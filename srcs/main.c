@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:06:26 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/11 23:32:35 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/15 16:18:26 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,23 +86,26 @@ void    process_line(t_shell *shell, char *line)
 		else
 			shell->exit_status = 2;
 		return ;
-	}*/
+	}
+	if(!syntax_check(shell->tokens))
+		return(free_tokens(&shell->tokens),free_cmds(shell->cmds), 0);free_shell_data(shell)
+	shell->cmds = parse_tokens(shell->tokens);
+	expansion(shell);
+	executor(shell)
+	free_tokens(&shell->tokens);
+	free_cmds(shell->cmds);
+}
 
-	/*
-		下一步：
-		shell->ast = parser(shell->tokens);
-		expansion(shell);
-		execute(shell);
-		cleanup current line data;
-	*/
-	//free_tokens(&shell->tokens);
-//}
-/*
 int main(int argc, char **argv, char **envp)
 {
     t_shell shell;
     char    *line;
 
+	if (argc != 1)//检查参数是不是1 ex：./minishell abc就不行
+	{
+		ft_putendl_fd("Usage: ./minishell\n", 2);
+		return (1);
+	}
     init_shell(&shell, envp);
     setup_interactive_signals();
     while (1)

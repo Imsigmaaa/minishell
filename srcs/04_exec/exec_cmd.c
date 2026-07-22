@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/13 23:33:49 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 13:51:24 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,51 +75,140 @@ static	char	*find_valid_path(char *av, char **all_paths)
 	return (NULL);//找不到返回NULL
 }
 //得到可执行路径
-static	char	*get_path(char *av, t_env *env)
+static	int	check_exec_error(char *path)
 {
-	int		i;
-	char	*path;
-	char	**all_paths;
+	struct stat st;// 准备一张空白"身份证"
+	// 先查文件存不存在
+	if (access(path, F_OK) != 0)// F_OK 文件存不存在 file ok
+		return (127);//文件不存在
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))// 查身份证，看是不是文件夹
+		return (126);//找到了这个文件,但不能执行它，文件存在,但没有执行权限;或者是个目录
+	if (access(path, X_OK) != 0)
+		return (126);
+	return (0);
+}
+
+static char	*get_path_from_env(char *av, t_env *env, int *err_code)
+{
 	t_env	*tmp;
+	char	**all_paths;
+	char	*path;
 	
 	tmp = env;
+	while (tmp && ft_strcmp(tmp->key, "PATH") != 0)//找到key里是PATH的那个节点
+		tmp = tmp->next;
+	if (!tmp || !tmp->value)
+	{
+		*err_code = 127;
+		return (NULL);
+	}
+	all_paths = ft_split(tmp->value, ':');//将节点value以冒号为标志拆分成路径组
+	if (!all_paths)
+	{
+		*err_code = 1;
+		return (NULL);
+	}
+	path = find_valid_path(av, all_paths);//找到正确的可执行路径
+	ft_free_arr(all_paths);
+	if(!path)
+		*err_code = 127;
+	return (path);
+}
+/*stat(路径, &身份证)   查一下这个路径对应的文件，把身份证信息填过来
+身份证里写着：
+- 这是文件夹 还是 普通文件 还是 符号链接...
+- 大小是多少
+- 权限是什么样的
+- 什么时候被修改过
+S_ISDIR、S_ISREG(是否普通文件)
+S_ISLNK(是否符号链接)这些都是配套的宏,专门用来"看身份证上写的类型是什么"。*/
+static	char	*get_path(char *av, t_env *env, int *err_code)
+{
+	char	*path;
+	
+	*err_code = 0;
+	path = NULL;
 	if(ft_strchr(av, '/'))//如果执行命令里带有/(包括/ ./ ../)
 	{
-		if(av && access(av, F_OK | X_OK) == 0)// 用户直接给了路径：./a.out 或 /bin/ls
-			return(ft_strdup(av));
-		return (NULL);// 有/但找不到 → 直接报错，不去PATH找
+		*err_code = check_exec_error(av);
+		if(*err_code == 0)
+		{
+			path = ft_strdup(av);
+			if (!path)
+				*err_code = 1;
+		}
+		return (path);// 如果err_code不是0直接返回NULL
 	}
-	else
+	path = get_path_from_env(av, env, err_code);
+	return (path);
+}
+
+static	char	**env_to_array(t_env *env)
+{
+	t_env	*tmp;
+	char	**envp;
+	char	*tmp_envp;
+	
+
+	int	env_count = 0;
+	tmp = env;
+	if (!tmp)
+		return (NULL);
+	while (tmp)
 	{
-		while (tmp && ft_strcmp(tmp->key, "PATH") != 0)//找到key里是PATH的那个节点
-				tmp = tmp->next;
-		if (!tmp)
-			return (NULL);
-		all_paths = ft_split(tmp->value, ':');//将节点value以冒号为标志拆分成路径组
-		if (!all_paths)
-			return (NULL);
-		path = find_valid_path(av, all_paths);//找到正确的可执行路径
-		ft_free_arr(all_paths);
-		if(!path)
-			return (NULL);
-		return (path);
+		env_count++;
+		tmp = tmp->next;
 	}
+	envp = malloc(sizeof(char *) * (env_count + 1));
+	if (!envp)
+		return (NULL);
+	tmp = env;
+	int	i = 0;
+	while (tmp)
+	{
+		tmp_envp = ft_strjoin(tmp->key, "=");
+		if (!tmp_envp)
+		{
+			ft_free_arr(envp);
+			return (NULL);
+		}
+		envp[i] = ft_strjoin(tmp_envp, tmp->value);
+		if (!envp[i])
+		{
+			free(tmp_envp);
+			ft_free_arr(envp);
+			return (NULL);
+		}
+		free(tmp_envp);
+		tmp = tmp->next;
+		i ++;
+	}
+	envp[i] = NULL;
+	return (envp);
+	
 }
 
 void	exec_cmd(t_cmd *cmds, t_env *env)
 {
 	char	**envp;
 	char	*path;
+	int		err_code;
 
-	path = get_path(cmds->argv[0], env);
+	path = get_path(cmds->argv[0], env, &err_code);
 	if (!path)
 	{
-		ft_printf("minishell: %s: command not found\n", cmds->argv[0]);
-		exit(127);//command no found
+		if (err_code == 126)
+			ft_printf("minishell: %s: Permission denied\n", cmds->argv[0]);
+		else if (err_code == 127 && ft_strchr(cmds->argv[0], '/'))// 带 /,文件本身不存在
+			ft_printf("minishell: %s: No such file or directory\n", cmds->argv[0]);
+		else if (err_code == 127)// 不带 /,PATH 里搜不到
+			ft_printf("minishell: %s: command not found\n", cmds->argv[0]);
+		exit(err_code);//command no found
 	}
 	envp = env_to_array(env);
 	execve(path, cmds->argv, envp);//如果execve执行成功下面的代码不会执行 反之
 	perror("execve");
 	ft_free_arr(envp);
 	free(path);
+	exit(1);
 }
