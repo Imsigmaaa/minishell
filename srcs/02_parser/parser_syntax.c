@@ -6,15 +6,13 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 02:37:01 by xingchen          #+#    #+#             */
-/*   Updated: 2026/06/11 23:15:30 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/23 17:00:54 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <string.h>
 #include <unistd.h>
-
-//语法错误检查
 
 int	syntax_error(char *token)
 {
@@ -24,37 +22,54 @@ int	syntax_error(char *token)
 	return (0);
 }
 
+static	int	check_pipe(t_token **toks)
+{
+	t_token	*next;
+
+	next = (*toks)->next;
+	if (!next || next->type == TOKEN_PIPE
+		|| next->type == TOKEN_EOF)
+		return (0);
+	*toks = next;
+	return (1);
+}
+
+static	int	check_redir(t_token **toks)
+{
+	t_token	*next;
+
+	next = (*toks)->next;
+	if (!next || next->type != TOKEN_WORD)
+		return (0);
+	*toks = next;
+	return (1);
+}
+
 int	syntax_check(t_token *tokens)
 {
 	t_token	*toks;
 
 	toks = tokens;
-	if(!tokens)
+	if (!tokens)
 		return (1);
-	//开局 "|"立即返回错误 (si le pipe est au debut , on return error imediat)
-	if(toks->type == TOKEN_PIPE)
+	if (toks->type == TOKEN_PIPE)
 		return (syntax_error("|"));
-	while(toks && toks->type == TOKEN_EOF)
+	while (toks && toks->type != TOKEN_EOF)
 	{
 		if (toks->type == TOKEN_WORD)
 			toks = toks->next;
-		else if(toks->type == TOKEN_PIPE)
+		else if (toks->type == TOKEN_PIPE)
 		{
-			/*pipe后面是NULL或者还是PIPE也立即返回错误
-			(si rien derrier pipe ou encore pipe , on return error imediat)
-			另外parser阶段会细化检查PIPE后面是否有valid command
-			(par contre, dans le parser, on va check profondemment si il y a de valide command	ou pas)*/
-			if(!toks->next || toks->next->type == TOKEN_PIPE)
-				return	(syntax_error("|"));
-			toks = toks->next;
+			if (check_pipe(&toks))
+				return (syntax_error("|"));
+		}
+		else if (is_redir_token(toks->type))
+		{
+			if (check_redir(&toks))
+				return (syntax_error(toks->value));
 		}
 		else
-		{
-			//redir后面如果是NULL或者不是WORD也立刻返回错误(NULL ou non WORD, on return error imediat)
-			if(!toks->next || toks->next->type != TOKEN_WORD)
-				return (syntax_error(toks->value));
-			toks = toks->next->next;
-		}
+			return (syntax_error(toks->value));
 	}
 	return (1);
 }

@@ -6,35 +6,19 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:54 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/08 23:52:00 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/23 17:20:36 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//以cat < input1.txt < input2.txt | grep hello > out1.txt >> out2.txt
-/* cmd->av[0] = ["cat"]
-redir ->  t_token_type = TOKEN_REDIR_IN
-				target = 'input1.txt'
-->	t_token_type = TOKEN_REDIR_IN
-			target = 'input1.txt'
-->NULL
-	cmd->av[1] = ["grep","hello"]
-redir ->  t_token_type = TOKEN_REDIR_out
-				target = 'out1.txt'
-->	t_token_type = TOKEN_APPEND
-			target = 'out2.txt'
-->NULL
-*/
 int	handle_heredoc(t_redir *redir)
 {
 	char	*line;
 	int		hd_fd[2];
 	
-	if(pipe(hd_fd) == -1)
+	if (pipe(hd_fd) == -1)
 		return(-1);
-	// | 的 pipe：一个进程写，另一个进程读。
-	// heredoc<< 的 pipe：shell 写，命令读
 	while (1)
 	{
 		line = readline("> ");//函数内部给malloc了
@@ -50,6 +34,7 @@ int	handle_heredoc(t_redir *redir)
 	close(hd_fd[1]);
 	return(hd_fd[0]);
 }
+
 int	prepare_redir_fd(t_redir *redir)
 {
 	int	fd;
@@ -57,11 +42,11 @@ int	prepare_redir_fd(t_redir *redir)
 	fd = -1;
 	if (redir->type == TOKEN_REDIR_IN)
 		fd = open(redir->target, O_RDONLY);
-	else if(redir->type == TOKEN_REDIR_OUT)
+	else if (redir->type == TOKEN_REDIR_OUT)
 		fd = open(redir->target, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if(redir->type == TOKEN_APPEND)
+	else if (redir->type == TOKEN_APPEND)
 		fd = open(redir->target, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if(redir->type == TOKEN_HEREDOC)
+	else if (redir->type == TOKEN_HEREDOC)
 		fd = handle_heredoc(redir);
 	return (fd);
 }

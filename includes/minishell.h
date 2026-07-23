@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/22 15:23:05 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/23 16:14:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ int				syntax_error(char *token);
 t_cmd			*parse_tokens(t_token *token);
 t_cmd			*new_cmd(void);
 int				add_arg(t_cmd *cmd, t_token *token);
+int				is_redir_token(t_token_type type);
 int				add_redir(t_cmd *cmd, t_token *tokens);
 void			free_cmds(t_cmd *cmds);
 void			ft_free_t_redir(t_redir *redirs);
@@ -197,44 +198,3 @@ size_t			ft_arrlen(char **arr);
 void			ft_free_arr(char **arr);
 int				ft_strcmp(const char *s1, const char *s2);
 void			update_exit_status(t_shell *shell, int status);
-/*void	print_lexer_error(int err);
-int		add_word_token(t_lexer *lex, char *s, int *i);
-int		add_operator_token(t_lexer *lex, char *s, int *i);
-int		add_token(t_lexer *lex, t_token_type type, char *value,
-		int has_quote, int has_wildcard);
-int		is_space(char c);
-int		is_operator_char(char c);
-char	*ms_strdup(char *s);
-char	*ms_substr(char *s, int start, int len);
-void	free_tokens(t_token **tokens);
-t_token *lexer(char *input, int *err);
-
-t_cmd	*parse_tokens(t_token *token);
-t_cmd	*new_cmd(void);
-void	free_cmds(t_cmd *cmds);
-//void	free_tokens(t_token *tokens);
-int	add_arg(t_cmd *cmd, t_token *token);
-int	add_redir(t_cmd *cmd, t_token *tokens);
-size_t	ft_arrlen(char **arr);
-void	ft_free_arr(char **arr);
-void	ft_free_t_redir(t_redir *redirs);
-t_token *tokenize(char *line);
-int	syntax_check(t_token *tokens);
-int	syntax_error(char *token);
-int	count_cmds(t_cmd *cmds);
-void	exec_single(t_shell *shell, t_cmd *cmds, t_env *env);
-void	exec_cmd(t_cmd *cmds, t_env *env);
-int		is_builtin(t_cmd *cmd);
-void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
-int	ft_strcmp(const char *s1, const char *s2);
-void	init_exec(t_exec *exec);
-int	init_exec_data(t_shell *shell, t_exec *exec, t_cmd *cmds);
-int	create_pipes(t_shell *shell, t_exec *exec);
-void close_created_fd(t_exec *exec, int created_pipes);
-void	free_exec(t_exec *exec);
-void	exec_pipe(t_shell *shell, t_cmd *cmds, t_env *env);
-int	handle_heredoc(t_redir *redir);
-int	prepare_redir_fd(t_redir *redir);
-int	exec_redir(t_cmd *cmd);*/
-#endif
-

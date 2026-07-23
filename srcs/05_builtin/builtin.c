@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 19:21:05 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/14 19:47:45 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/22 15:12:46 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	builtin_echo(t_cmd *cmd)
 	ft_printf("\n");
 	return ;
 }
-int	exec_builtin(t_cmd *cmd,t_env *env)
+int	exec_builtin(t_shell *shell, t_cmd *cmd)
 {
 	int	status;
 
