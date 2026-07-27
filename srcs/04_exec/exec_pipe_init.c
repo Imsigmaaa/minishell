@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 23:25:23 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 18:34:49 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:26:12 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	create_pipes(t_shell *shell, t_exec *exec)
 		if (pipe(exec->pipe_fd[i]) == -1)
 		{
 			close_created_fd(exec, i);//释放所有已创建pipe
-			close_all_heredoc_fds(shell);
 			perror("pipe");
 			shell->exit_status = 1;
 			return (0);

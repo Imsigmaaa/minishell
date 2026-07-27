@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 18:22:53 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:20:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static	int	prepare_one_heredoc(t_redir *redir, int number)
 	if (write_fd == -1)
 		return (free(path), perror("heredoc"), 0);
 	write_heredoc(redir, write_fd);
-	redir->heredoc_fd = open(path, O_WRONLY);
+	redir->heredoc_fd = open(path, O_RDONLY);
 	unlink(path);
 	free(path);
 	if (redir->heredoc_fd == -1)
@@ -99,7 +99,7 @@ void	close_all_heredoc_fds(t_shell *shell)
 	cmds = shell->cmds;
 	while (cmds)
 	{
-		redir =cmd->redirs;
+		redir = cmds->redirs;
 		while (redir)
 		{
 			if (redir->heredoc_fd >= 0)

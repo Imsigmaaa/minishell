@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 17:04:01 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:14:13 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	add_redir(t_cmd *cmd, t_token *tokens)
 	redir->type = tokens->type;//将这个类型复制到重定向里
 	redir->target = ft_strdup(tokens->next->value);
 	if (!redir->target)
-		return (perror("malloc"), 0);
+		return (perror("malloc"),ft_free_t_redir(redir), 0);
 	if (!cmd->redirs)
 		cmd->redirs = redir;
 	else

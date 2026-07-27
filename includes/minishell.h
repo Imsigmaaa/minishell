@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/27 18:28:00 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:37:02 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void			exec_pipe(t_shell *shell);
 void			init_exec(t_exec *exec);
 int				init_exec_data(t_shell *shell, t_exec *exec);
 int				create_pipes(t_shell *shell, t_exec *exec);
-void			close_created_fd(t_exec *exec, int created_pipes);
+void			close_created_fd(t_exec *exec, int pipe_count);
 void			free_exec(t_exec *exec);
 int				executor(t_shell *shell);
 

@@ -6,17 +6,18 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 23:26:44 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:10:07 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:35:38 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void close_created_fd(t_exec *exec, int created_pipes)
+void close_created_fd(t_exec *exec, int pipe_count)
 {
 	int	j;
+
 	j = 0;
-	while (j < created_pipes)
+	while (j < pipe_count)
 	{
 		close(exec->pipe_fd[j][0]);
 		close(exec->pipe_fd[j][1]);

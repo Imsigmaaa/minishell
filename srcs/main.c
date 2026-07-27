@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:06:26 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/15 16:18:26 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 18:13:46 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,11 @@ void    process_line(t_shell *shell, char *line)
 		return(free_tokens(&shell->tokens),free_cmds(shell->cmds), 0);free_shell_data(shell)
 	shell->cmds = parse_tokens(shell->tokens);
 	expansion(shell);
+	if (!prepare_all_heredoc(shell))
+	{
+		shell->exit_status = ?;
+		return ;
+	}
 	executor(shell)
 	free_tokens(&shell->tokens);
 	free_cmds(shell->cmds);

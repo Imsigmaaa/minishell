@@ -6,7 +6,7 @@
 #    By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/11 21:14:31 by xingchen          #+#    #+#              #
-#    Updated: 2026/06/11 22:47:29 by xingchen         ###   ########.fr        #
+#    Updated: 2026/07/27 15:29:35 by xingchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,5 +57,5 @@ fclean: clean
 #完全重新编译
 re: fclean all
 #声明伪目标
-.PHONEY: all clean fclean re
+.PHONY: all clean fclean re
 

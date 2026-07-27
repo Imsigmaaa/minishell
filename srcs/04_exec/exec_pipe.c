@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 18:26:27 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:25:54 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ static	int	fork_children(t_shell *shell, t_exec *exec)
 		{
 			perror("fork");
 			close_created_fd(exec, exec->cmd_count - 1);
-			close_all_heredoc_fds(shell);
 			wait_all_childs(shell, exec, i);
 			shell->exit_status = 1;
 			return (0);
@@ -131,7 +130,6 @@ void	exec_pipe(t_shell *shell)
 		return ;//父进程直接返回
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
-	close_all_heredoc_fds(shell);
 	wait_all_childs(shell, &exec, exec.cmd_count);
 	free_exec(&exec);
 }	

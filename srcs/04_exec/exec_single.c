@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:21:45 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 21:38:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	exec_single(t_shell *shell)
 	{
 		if (shell->cmds->redirs && exec_redir(shell->cmds) == -1)
 			exit(1);
+		close_all_heredoc_fds(shell);
 		exec_cmd(shell->cmds, shell->env);
 	}
 	if (waitpid(pid, &status, 0) == -1)
