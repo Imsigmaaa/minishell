@@ -6,34 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:54 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:20:36 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 18:32:23 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	handle_heredoc(t_redir *redir)
-{
-	char	*line;
-	int		hd_fd[2];
-	
-	if (pipe(hd_fd) == -1)
-		return(-1);
-	while (1)
-	{
-		line = readline("> ");//函数内部给malloc了
-		if (!line || ft_strcmp(line, redir->target) == 0)
-		{
-			free(line);
-			break;
-		}
-		write(hd_fd[1], line, ft_strlen(line));
-		write(hd_fd[1], "\n", 1);
-		free(line);
-	}
-	close(hd_fd[1]);
-	return(hd_fd[0]);
-}
 
 int	prepare_redir_fd(t_redir *redir)
 {
@@ -47,7 +24,7 @@ int	prepare_redir_fd(t_redir *redir)
 	else if (redir->type == TOKEN_APPEND)
 		fd = open(redir->target, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (redir->type == TOKEN_HEREDOC)
-		fd = handle_heredoc(redir);
+		fd = redir->heredoc_fd;
 	return (fd);
 }
 

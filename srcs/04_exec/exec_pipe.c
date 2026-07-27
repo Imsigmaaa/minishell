@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:20:08 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 18:26:27 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ static int	dup_pipe_fd(int i, t_exec *exec)
 	return (1);
 }
 
-void	close_free_and_exit_child(t_exec *exec)
+void	close_free_and_exit_child(t_shell *shell, t_exec *exec)
 {
 	close_created_fd(exec, exec->cmd_count - 1);
+	close_all_heredoc_fds(shell);
 	free_exec(exec);
 	exit(1);
 }
@@ -44,10 +45,11 @@ static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 {
 	int	status;
 	if (!dup_pipe_fd(i, exec))
-		close_free_and_exit_child(exec);
+		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
-		close_free_and_exit_child(exec);
+		close_free_and_exit_child(shell, exec);
 	close_created_fd(exec, exec->cmd_count - 1);
+	close_all_heredoc_fds(shell);
 	if (!cmd->argv || !cmd->argv[0])//Pipeline 中只有重定向、没有命令时直接释放退出
 	{
 		free_exec(exec);
@@ -101,6 +103,7 @@ static	int	fork_children(t_shell *shell, t_exec *exec)
 		{
 			perror("fork");
 			close_created_fd(exec, exec->cmd_count - 1);
+			close_all_heredoc_fds(shell);
 			wait_all_childs(shell, exec, i);
 			shell->exit_status = 1;
 			return (0);
@@ -128,6 +131,7 @@ void	exec_pipe(t_shell *shell)
 		return ;//父进程直接返回
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
+	close_all_heredoc_fds(shell);
 	wait_all_childs(shell, &exec, exec.cmd_count);
 	free_exec(&exec);
 }	

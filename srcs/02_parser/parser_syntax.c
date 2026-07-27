@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 02:37:01 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:00:54 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 15:50:32 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static	int	check_pipe(t_token **toks)
 	next = (*toks)->next;
 	if (!next || next->type == TOKEN_PIPE
 		|| next->type == TOKEN_EOF)
-		return (0);
+		return (syntax_error("|"));
 	*toks = next;
 	return (1);
 }
@@ -39,8 +39,10 @@ static	int	check_redir(t_token **toks)
 	t_token	*next;
 
 	next = (*toks)->next;
-	if (!next || next->type != TOKEN_WORD)
-		return (0);
+	if (!next || next->type == TOKEN_EOF)
+		return (syntax_error("newline"));
+	if (next->type != TOKEN_WORD)
+		return (syntax_error(next->value));
 	*toks = next;
 	return (1);
 }
@@ -60,13 +62,13 @@ int	syntax_check(t_token *tokens)
 			toks = toks->next;
 		else if (toks->type == TOKEN_PIPE)
 		{
-			if (check_pipe(&toks))
-				return (syntax_error("|"));
+			if (!check_pipe(&toks))
+				return (0);
 		}
 		else if (is_redir_token(toks->type))
 		{
-			if (check_redir(&toks))
-				return (syntax_error(toks->value));
+			if (!check_redir(&toks))
+				return (0);
 		}
 		else
 			return (syntax_error(toks->value));

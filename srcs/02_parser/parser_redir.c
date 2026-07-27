@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 16:36:19 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 17:04:01 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_redir	*new_redir(void)
 	if (!redir)
 		return NULL;
 	redir->target = NULL;
+	redir->heredoc_fd = -1;
 	redir->next = NULL;
 	return (redir);
 }

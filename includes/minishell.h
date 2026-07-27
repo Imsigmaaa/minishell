@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:07:58 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/23 16:14:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/27 18:28:00 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ typedef struct s_redir
 {
     t_token_type        type;
     char                *target;
+	int					heredoc_fd;
     struct s_redir      *next;
 }   t_redir;
 
@@ -183,6 +184,13 @@ int				prepare_redir_fd(t_redir *redir);
 int				exec_redir(t_cmd *cmd);
 
 /* ************************************************************************** */
+/*                               HEREDOCS                                 */
+/* ************************************************************************** */
+
+int				prepare_all_heredocs(t_shell *shell);
+void			close_all_heredoc_fds(t_shell *shell);
+
+/* ************************************************************************** */
 /*                                  BUILTINS                                  */
 /* ************************************************************************** */
 
@@ -198,3 +206,5 @@ size_t			ft_arrlen(char **arr);
 void			ft_free_arr(char **arr);
 int				ft_strcmp(const char *s1, const char *s2);
 void			update_exit_status(t_shell *shell, int status);
+
+#endif
