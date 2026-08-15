@@ -13,7 +13,8 @@ LIBFT_FILES = $(wildcard $(LIBFT_DIR)/*.c) \
 
 CORE_SRCS = srcs/main.c \
 			srcs/init.c \
-			srcs/free.c
+			srcs/free.c \
+			srcs/utils1.c
 
 LEXER_SRCS = srcs/lexer/lexer.c \
 			 srcs/lexer/lexer_add_operator.c \

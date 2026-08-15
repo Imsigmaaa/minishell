@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/28 02:01:55 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:09:37 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,18 +80,20 @@ void	exec_single(t_shell *shell)
 		exec_in_parent(shell);
 		return ;
 	}
-	ignore_parent_signals();
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
 		shell->exit_status = 1;
-		setup_prompt_signals();
+		init_interactive_signals();
 		return ;
 	}	
 	if (pid == 0)
 	{
-		setup_child_signals();
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (shell->cmds->redirs && exec_redir(shell->cmds) == -1)
 			exit(1);
 		close_all_heredoc_fds(shell);
@@ -101,10 +103,10 @@ void	exec_single(t_shell *shell)
 	{
 		perror("waitpid");
 		shell->exit_status = 1;
-		setup_prompt_signals();
+		init_interactive_signals();
 		return ;
 	}
 	print_child_signal(status);
 	update_exit_status(shell, status);
-	setup_prompt_signals();
+	init_interactive_signals();
 }

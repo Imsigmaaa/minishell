@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 15:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 15:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/15 22:12:13 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,36 @@ void	sync_signal_status(t_shell *shell)
 	if (g_signal == SIGINT)
 		shell->exit_status = 130;
 	g_signal = 0;
+}
+static void	handle_heredoc_sigint(int signal_number)
+{
+	g_signal = signal_number;
+	rl_done = 1;
+}
+
+void	setup_heredoc_signals(void)
+{
+	struct sigaction	action;
+
+	g_signal = 0;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	action.sa_handler = handle_heredoc_sigint;
+	if (sigaction(SIGINT, &action, NULL) < 0)
+		perror("sigaction");
+	action.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &action, NULL) < 0)
+		perror("sigaction");
+}
+void	print_child_signal(int status)
+{
+	int	signal_number;
+
+	if (!WIFSIGNALED(status))
+		return ;
+	signal_number = WTERMSIG(status);
+	if (signal_number == SIGINT)
+		write(STDOUT_FILENO, "\n", 1);
+	else if (signal_number == SIGQUIT)
+		write(STDERR_FILENO, "Quit: 3\n", 8);
 }

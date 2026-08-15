@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 21:39:59 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:04:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static	int	write_heredoc(t_shell *shell,  t_redir *redir, int fd)
 			free(line);
 			close(fd);
 			shell->exit_status = 130;
-			setup_prompt_signals();
+			init_interactive_signals();
 			return (0);
 		}
 		if (!line)
@@ -64,7 +64,7 @@ static	int	write_heredoc(t_shell *shell,  t_redir *redir, int fd)
 			{
 				close(fd);
 				shell->exit_status = 1;
-				setup_prompt_signals();
+				init_interactive_signals();
 				return (0);
 			}
 			line = expanded;
@@ -73,7 +73,7 @@ static	int	write_heredoc(t_shell *shell,  t_redir *redir, int fd)
 		free(line);
 	}
 	close(fd);
-	setup_prompt_signals();
+	init_interactive_signals();
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 21:49:23 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:16:53 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ typedef struct s_exec
 	int			cmd_count;
 	int			(*pipe_fd)[2];
 	pid_t		*pids;
+	int			status;
 }	t_exec;
 
 extern volatile sig_atomic_t	g_signal;
@@ -157,8 +158,6 @@ void		update_exit_status(t_shell *shell, int status);
 int			count_cmds(t_cmd *cmds);
 void		wait_all_children(t_shell *shell, t_exec *exec, int count);
 void		print_exec_error(char *command, int error);
-int			save_stdio(int *saved_stdin, int *saved_stdout);
-int			restore_stdio(int saved_stdin, int saved_stdout);
 int			exec_redir(t_cmd *cmd);
 int			prepare_all_heredocs(t_shell *shell);
 void		close_all_heredoc_fds(t_shell *shell);
@@ -186,4 +185,8 @@ void		cleanup_shell(t_shell *shell);
 void	ft_free_arr(char **arr);
 size_t	ft_arrlen(char **arr);
 void	ft_free_t_redir(t_redir *redirs);
+void	setup_heredoc_signals(void);
+int	ft_strcmp(const char *s1, const char *s2);
+void	print_child_signal(int status);
+
 #endif

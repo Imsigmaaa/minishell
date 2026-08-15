@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/28 02:03:50 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:10:43 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 {
 	int	status;
 
-	setup_child_signals();
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	if (!dup_pipe_fd(i, exec))
 		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
@@ -129,15 +130,16 @@ void	exec_pipe(t_shell *shell)
 		free_exec(&exec);
 		return ;//父进程直接返回
 	}
-	ignore_parent_signals();
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	if (!fork_children(shell, &exec))
 	{
-		setup_prompt_signals();
+		init_interactive_signals();
 		free_exec(&exec);
 		return ;//父进程直接返回
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
 	wait_all_childs(shell, &exec, exec.cmd_count);
-	setup_prompt_signals();
+	init_interactive_signals();
 	free_exec(&exec);
 }	

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 23:25:23 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:26:12 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:57:59 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ void	init_exec(t_exec *exec)
 	exec->cmd_count = 0;
 	exec->pipe_fd = NULL;
 	exec->pids = NULL;
-	exec->saved_stdin = - 1;
-	exec->saved_stdout = -1;
 	exec->status = 0;
 }
 
