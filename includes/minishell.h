@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 21:34:10 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:49:23 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # include <signal.h>
-
+#include "libft.h"
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -183,5 +183,7 @@ void		sync_signal_status(t_shell *shell);
 
 int			init_shell(t_shell *shell, char **envp);
 void		cleanup_shell(t_shell *shell);
-
+void	ft_free_arr(char **arr);
+size_t	ft_arrlen(char **arr);
+void	ft_free_t_redir(t_redir *redirs);
 #endif

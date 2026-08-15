@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static size_t	ms_strlen(char *s)
+size_t	ms_strlen(char *s)
 {
 	size_t	i;
 

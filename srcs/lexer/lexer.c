@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 22:30:59 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/11 22:13:31 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 12:00:00 by yushan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ int	is_space(char c)
 
 int	is_operator_char(char c)
 {
-	return (c == '|' || c == '<' || c == '>'
-		|| c == '&' || c == '(' || c == ')' || c == ';');
+	return (c == '|' || c == '<' || c == '>' || c == '&'
+		|| c == '(' || c == ')' || c == ';');
 }
 
-t_token	*lexer(char *input, int *err) //接入主程序的processe line部分
+t_token	*lexer(char *input, int *err)
 {
 	t_lexer	lex;
 	int		i;
@@ -44,7 +44,7 @@ t_token	*lexer(char *input, int *err) //接入主程序的processe line部分
 		else
 			add_word_token(&lex, input, &i);
 	}
-	if (lex.err == LEX_OK && !add_token(&lex, TOKEN_EOF, NULL, 0, 0))
+	if (lex.err == LEX_OK && !add_token(&lex, TOKEN_EOF, NULL, 0))
 		free_tokens(&lex.head);
 	if (lex.err != LEX_OK)
 		free_tokens(&lex.head);

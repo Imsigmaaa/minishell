@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 21:17:23 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:49:57 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	is_redir_token(t_token_type type)
 	return (type == TOKEN_REDIR_IN
 		|| type == TOKEN_REDIR_OUT
 		|| type == TOKEN_APPEND
-		|| type == TOKEN_HEREDOC)
+		|| type == TOKEN_HEREDOC);
 }
 
 t_redir	*new_redir(void)
