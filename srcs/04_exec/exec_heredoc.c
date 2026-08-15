@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:20:30 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/28 02:10:12 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,59 @@ static	char	*get_heredoc_path(int number)
 	return (path);
 }
 
-static	void	write_heredoc(t_redir *redir, int fd)
+static	int	write_heredoc(t_redir *redir, int fd)
 {
 	char	*line;
+	char	*expanded;
 	
-	line = NULL;
+	g_signal = 0;
+	setup_heredoc_signals();
 	while (1)
 	{
 		line = readline("> ");//函数内部给malloc了
-		if (!line || ft_strcmp(line, redir->target) == 0)
+		if (g_signal == SIGINT)
+		{
+			free(line);
+			close(fd);
+			shell->exit_status = 130;
+			setup_prompt_signals();
+			return (0);
+		}
+		if (!line)
+		{
+			ft_putstr_fd("minishell: warning: here-document ", 2);
+			ft_putstr_fd("delimited by end-of-file (wanted `", 2);
+			ft_putstr_fd(redir->target, 2);
+			ft_putendl_fd("')", 2);
+			break ;
+		}
+		if (ft_strcmp(line, redir->target) == 0)
 		{
 			free(line);
 			break;
+		}
+		if (redir->heredoc_expand)
+		{
+			expanded = expand_heredoc_line(line, shell);
+			free(line);
+			if (!expanded)
+			{
+				close(fd);
+				shell->exit_status = 1;
+				setup_prompt_signals();
+				return (0);
+			}
+			line = expanded;
 		}
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
 	close(fd);
+	setup_prompt_signals();
 	return ;
 }
 
-static	int	prepare_one_heredoc(t_redir *redir, int number)
+static	int	prepare_one_heredoc(t_shell *shell, t_redir *redir, int number)
 {
 	char	*path;
 	int		write_fd;
@@ -56,7 +88,12 @@ static	int	prepare_one_heredoc(t_redir *redir, int number)
 	write_fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (write_fd == -1)
 		return (free(path), perror("heredoc"), 0);
-	write_heredoc(redir, write_fd);
+	if (!write_heredoc(redir, write_fd))
+	{
+		unlink(path);
+		free(path);
+		return (0);
+	}
 	redir->heredoc_fd = open(path, O_RDONLY);
 	unlink(path);
 	free(path);
@@ -80,7 +117,7 @@ int	prepare_all_heredocs(t_shell *shell)
 		{
 			if (redir->type ==TOKEN_HEREDOC)
 			{
-				if(!prepare_one_heredoc(redir, number))
+				if(!prepare_one_heredoc(shell, redir, number))
 					return (0);
 				number ++;
 			}

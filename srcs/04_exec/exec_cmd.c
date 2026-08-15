@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:08:43 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/28 01:47:12 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,50 +147,6 @@ static	char	*get_path(char *av, t_env *env, int *err_code)
 	}
 	path = get_path_from_env(av, env, err_code);
 	return (path);
-}
-
-static	char	**env_to_array(t_env *env)
-{
-	t_env	*tmp;
-	char	**envp;
-	char	*tmp_envp;
-
-	int	env_count = 0;
-	tmp = env;
-	if (!tmp)
-		return (NULL);
-	while (tmp)
-	{
-		env_count++;
-		tmp = tmp->next;
-	}
-	envp = malloc(sizeof(char *) * (env_count + 1));
-	if (!envp)
-		return (NULL);
-	tmp = env;
-	int	i = 0;
-	while (tmp)
-	{
-		tmp_envp = ft_strjoin(tmp->key, "=");
-		if (!tmp_envp)
-		{
-			ft_free_arr(envp);
-			return (NULL);
-		}
-		envp[i] = ft_strjoin(tmp_envp, tmp->value);
-		if (!envp[i])
-		{
-			free(tmp_envp);
-			ft_free_arr(envp);
-			return (NULL);
-		}
-		free(tmp_envp);
-		tmp = tmp->next;
-		i ++;
-	}
-	envp[i] = NULL;
-	return (envp);
-	
 }
 
 void	exec_cmd(t_cmd *cmds, t_env *env)

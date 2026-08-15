@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,26 +12,38 @@
 
 #include "minishell.h"
 
-int	exec_builtin(t_shell *shell, t_cmd *cmd)
+static int	is_n_option(char *argument)
 {
-	char	*name;
+	int	i;
 
-	if (!cmd || !cmd->argv || !cmd->argv[0])
+	if (!argument || argument[0] != '-' || argument[1] != 'n')
 		return (0);
-	name = cmd->argv[0];
-	if (env_strcmp(name, "echo") == 0)
-		return (builtin_echo(cmd));
-	if (env_strcmp(name, "cd") == 0)
-		return (builtin_cd(shell, cmd));
-	if (env_strcmp(name, "pwd") == 0)
-		return (builtin_pwd(cmd));
-	if (env_strcmp(name, "export") == 0)
-		return (builtin_export(shell, cmd));
-	if (env_strcmp(name, "unset") == 0)
-		return (builtin_unset(shell, cmd));
-	if (env_strcmp(name, "env") == 0)
-		return (builtin_env(shell, cmd));
-	if (env_strcmp(name, "exit") == 0)
-		return (builtin_exit(shell, cmd));
-	return (1);
+	i = 2;
+	while (argument[i] == 'n')
+		i++;
+	return (argument[i] == '\0');
+}
+
+int	builtin_echo(t_cmd *cmd)
+{
+	int	i;
+	int	newline;
+
+	i = 1;
+	newline = 1;
+	while (cmd->argv[i] && is_n_option(cmd->argv[i]))
+	{
+		newline = 0;
+		i++;
+	}
+	while (cmd->argv[i])
+	{
+		write(1, cmd->argv[i], ms_strlen(cmd->argv[i]));
+		if (cmd->argv[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if (newline)
+		write(1, "\n", 1);
+	return (0);
 }

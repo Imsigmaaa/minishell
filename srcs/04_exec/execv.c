@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:23:59 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/28 02:11:36 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ int	executor(t_shell *shell)
 		return (shell->exit_status);
 	if (!prepare_all_heredoc(shell))
 	{
-		shell->exit_status = 1;
+		close_all_heredoc_fds(shell);
+		if (g_signal == SIGINT)
+			shell->exit_status = 130;
+		else if (shell->exit_status != 130)
+			shell->exit_status = 1;
+		g_signal = 0;
 		return (shell->exit_status);
 	}
 	n_cmds = count_cmds(shell->cmds);

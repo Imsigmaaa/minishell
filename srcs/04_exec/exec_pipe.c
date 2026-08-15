@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:25:54 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/07/28 02:03:50 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ void	close_free_and_exit_child(t_shell *shell, t_exec *exec)
 static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 {
 	int	status;
+
+	setup_child_signals();
 	if (!dup_pipe_fd(i, exec))
 		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
@@ -81,7 +83,10 @@ static	void	wait_all_childs(t_shell *shell, t_exec *exec, int count)
 			wait_error = 1;
 		}
 		else if (i == count - 1 )
+		{
+			print_child_signal(exec->status);
 			update_exit_status(shell, exec->status);
+		}
 		i ++;
 	}
 	if (wait_error)
@@ -124,12 +129,15 @@ void	exec_pipe(t_shell *shell)
 		free_exec(&exec);
 		return ;//父进程直接返回
 	}
+	ignore_parent_signals();
 	if (!fork_children(shell, &exec))
 	{
+		setup_prompt_signals();
 		free_exec(&exec);
 		return ;//父进程直接返回
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
 	wait_all_childs(shell, &exec, exec.cmd_count);
+	setup_prompt_signals();
 	free_exec(&exec);
 }	

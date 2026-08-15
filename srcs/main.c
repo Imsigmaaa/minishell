@@ -3,78 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/04 14:06:26 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/27 18:13:46 by xingchen         ###   ########.fr       */
+/*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
+/*   Updated: 2026/08/15 13:07:58 by yushan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-void print_tokens(t_token *tokens)
-{
-	t_token *tmp;
 
-	tmp = tokens;
-	while (tmp)
-	{
-		printf("value       : %s\n",tmp->value);
-		printf("type        : %d\n",tmp->type);
-		printf("has_quote   : %d\n",tmp->has_quote);
-		printf("has_wildcard: %d\n",tmp->has_wildcard);
-		tmp = tmp->next;
-	}
-	
-}
-void print_cmds(t_cmd *cmds)
+static int	lex_line(t_shell *shell, char *line)
 {
-	t_cmd *tmp;
-
-	tmp =  cmds;
-	while (tmp)
-	{
-		int i = 0;
-		while (tmp->argv &&tmp->argv[i])
-		{
-			printf("%s\n",tmp->argv[i]);
-			i ++;
-		}
-		t_redir *redir = tmp->redirs;
-		while (redir)
-		{
-			printf("%d\n",redir->type);
-			printf("%s\n",redir->target);
-			redir = redir->next;	
-		}
-		tmp = tmp->next;	
-	}
-}
-int main(void)
-{
-	t_token *tokens;
-	t_cmd	*cmds;	
-	int err = 0;
-	cmds = NULL;
-	tokens = lexer("echo &&&", &err);
-	if (err)
-	{
-		printf("lexer error\n");
-		free_tokens(&tokens);
-		return (1);
-	}
-	print_tokens(tokens);
-	if(!syntax_check(tokens))
-		return(free_tokens(&tokens),free_cmds(cmds), 0);
-	cmds = parse_tokens(tokens);
-	print_cmds(cmds);
-	free_cmds(cmds);
-	free_tokens(&tokens);
-
-}
-/*
-void    process_line(t_shell *shell, char *line)
-{
-    int err;
+	int	err;
 
 	err = LEX_OK;
 	shell->tokens = lexer(line, &err);
@@ -85,45 +25,71 @@ void    process_line(t_shell *shell, char *line)
 			shell->exit_status = 1;
 		else
 			shell->exit_status = 2;
-		return ;
+		return (0);
 	}
-	if(!syntax_check(shell->tokens))
-		return(free_tokens(&shell->tokens),free_cmds(shell->cmds), 0);free_shell_data(shell)
-	shell->cmds = parse_tokens(shell->tokens);
-	expansion(shell);
-	if (!prepare_all_heredoc(shell))
+	if (!syntax_check(shell->tokens))
 	{
-		shell->exit_status = ?;
-		return ;
+		shell->exit_status = 2;
+		return (0);
 	}
-	executor(shell)
-	free_tokens(&shell->tokens);
-	free_cmds(shell->cmds);
+	return (1);
 }
 
-int main(int argc, char **argv, char **envp)
+static int	parse_line(t_shell *shell, char *line)
 {
-    t_shell shell;
-    char    *line;
-
-	if (argc != 1)//检查参数是不是1 ex：./minishell abc就不行
+	if (!lex_line(shell, line))
+		return (0);
+	shell->cmds = parse_tokens(shell->tokens);
+	if (!shell->cmds && shell->tokens->type != TOKEN_EOF)
 	{
-		ft_putendl_fd("Usage: ./minishell\n", 2);
-		return (1);
+		shell->exit_status = 1;
+		return (0);
 	}
-    init_shell(&shell, envp);
-    setup_interactive_signals();
-    while (1)
-    {
-        line = readline("minishell$ ");
-        if (line == NULL)
-            break;
-        if (*line != '\0')
-            add_history(line);
-        process_line(&shell, line);
-        free(line);
-    }
-    cleanup_shell(&shell);
-    return (shell.exit_status);
+	return (shell->cmds != NULL);
 }
-*/
+
+/* MODIFIED: expansion must succeed before execution begins. */
+static void	process_line(t_shell *shell, char *line)
+{
+	if (parse_line(shell, line) && expansion(shell))
+		executor(shell);
+	free_cmds(shell->cmds);
+	shell->cmds = NULL;
+	free_tokens(&shell->tokens);
+}
+
+static int	read_input(t_shell *shell)
+{
+	char	*line;
+
+	line = readline("minishell$ ");
+	sync_signal_status(shell);
+	if (!line)
+	{
+		write(1, "exit\n", 5);
+		return (0);
+	}
+	if (line[0])
+		add_history(line);
+	process_line(shell, line);
+	free(line);
+	return (1);
+}
+
+/* MODIFIED: prompt signal behavior is installed before the readline loop. */
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell	shell;
+
+	(void)argv;
+	if (argc != 1)
+		return (write(2, "Usage: ./minishell\n", 19), 1);
+	if (!init_shell(&shell, envp))
+		return (1);
+	if (!init_interactive_signals())
+		return (cleanup_shell(&shell), 1);
+	while (!shell.should_exit && read_input(&shell))
+		;
+	cleanup_shell(&shell);
+	return (shell.exit_status);
+}

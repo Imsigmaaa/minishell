@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,26 +12,28 @@
 
 #include "minishell.h"
 
-int	exec_builtin(t_shell *shell, t_cmd *cmd)
+static int	unset_identifier_error(char *argument)
 {
-	char	*name;
-
-	if (!cmd || !cmd->argv || !cmd->argv[0])
-		return (0);
-	name = cmd->argv[0];
-	if (env_strcmp(name, "echo") == 0)
-		return (builtin_echo(cmd));
-	if (env_strcmp(name, "cd") == 0)
-		return (builtin_cd(shell, cmd));
-	if (env_strcmp(name, "pwd") == 0)
-		return (builtin_pwd(cmd));
-	if (env_strcmp(name, "export") == 0)
-		return (builtin_export(shell, cmd));
-	if (env_strcmp(name, "unset") == 0)
-		return (builtin_unset(shell, cmd));
-	if (env_strcmp(name, "env") == 0)
-		return (builtin_env(shell, cmd));
-	if (env_strcmp(name, "exit") == 0)
-		return (builtin_exit(shell, cmd));
+	write(2, "minishell: unset: `", 19);
+	write(2, argument, ms_strlen(argument));
+	write(2, "': not a valid identifier\n", 26);
 	return (1);
+}
+
+int	builtin_unset(t_shell *shell, t_cmd *cmd)
+{
+	int	i;
+	int	status;
+
+	i = 1;
+	status = 0;
+	while (cmd->argv[i])
+	{
+		if (!env_is_valid_key(cmd->argv[i]))
+			status = unset_identifier_error(cmd->argv[i]);
+		else if (!env_unset(&shell->env, cmd->argv[i]))
+			status = (perror("malloc"), 1);
+		i++;
+	}
+	return (status);
 }
