@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:14:13 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:17:23 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ t_redir	*new_redir(void)
 		return NULL;
 	redir->target = NULL;
 	redir->heredoc_fd = -1;
+	redir->heredoc_expand = 1;
 	redir->next = NULL;
 	return (redir);
 }
@@ -40,6 +41,8 @@ void	ft_free_t_redir(t_redir *redirs)
 	while (redirs)
 	{
 		tmp = redirs->next;
+		if (redirs->heredoc_fd >= 0)
+			close(redirs->heredoc_fd);
 		free(redirs->target);
 		free(redirs);
 		redirs = tmp;

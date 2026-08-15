@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/28 02:10:12 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:39:59 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static	char	*get_heredoc_path(int number)
 	return (path);
 }
 
-static	int	write_heredoc(t_redir *redir, int fd)
+static	int	write_heredoc(t_shell *shell,  t_redir *redir, int fd)
 {
 	char	*line;
 	char	*expanded;
@@ -74,7 +74,7 @@ static	int	write_heredoc(t_redir *redir, int fd)
 	}
 	close(fd);
 	setup_prompt_signals();
-	return ;
+	return (1);
 }
 
 static	int	prepare_one_heredoc(t_shell *shell, t_redir *redir, int number)
@@ -88,7 +88,7 @@ static	int	prepare_one_heredoc(t_shell *shell, t_redir *redir, int number)
 	write_fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (write_fd == -1)
 		return (free(path), perror("heredoc"), 0);
-	if (!write_heredoc(redir, write_fd))
+	if (!write_heredoc(shell,redir, write_fd))
 	{
 		unlink(path);
 		free(path);

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:28:17 by yushan            #+#    #+#             */
-/*   Updated: 2026/07/28 01:58:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:37:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	init_shell(t_shell *shell, char **envp)
 	shell->cmds = NULL;
 	shell->exit_status = 0;
 	shell->should_exit = 0;
-	shell->env = copy_environment(envp);
+	shell->env = env_init(envp);
 	if (envp && envp[0] && !shell->env)
 	{
 		perror("malloc");
@@ -39,7 +39,6 @@ void	free_line_data(t_shell *shell)
 void	cleanup_shell(t_shell *shell)
 {
 	free_line_data(shell);
-	free_env(shell->env);
-	shell->env = NULL;
+	env_free(&shell->env);
 	rl_clear_history();
 }

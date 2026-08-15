@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:34:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 16:35:17 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 21:08:06 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,18 @@ void	free_cmds(t_cmd *cmds)
 	}
 }
 
-static	void	append_value(char **tmp, char *value, char **av, int size)
+static	void	append_value(char **new_argv, char *value, char **av, size_t size)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (i < size)
 	{	
-		tmp[i] = av[i];
+		new_argv[i] = av[i];
 		i ++;
 	}
-	tmp[i] = value;
-	tmp[i + 1] = NULL;
+	new_argv[i] = value;
+	new_argv[i + 1] = NULL;
 	return ;
 }
 

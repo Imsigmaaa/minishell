@@ -1,61 +1,96 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/06/11 21:14:31 by xingchen          #+#    #+#              #
-#    Updated: 2026/07/27 15:29:35 by xingchen         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-#可执行文件名
 NAME = minishell
-#编译器
+
 CC = cc
-#编译选项
 CFLAGS = -Wall -Wextra -Werror
-#头文件目录
-INCLUDES = -Iincludes -Ilibft
+CPPFLAGS = -Iincludes -Isrcs/expand -Ilibft
+LDLIBS = -Llibft -lft -lreadline
+RM = rm -f
 
-LIBFT = libft/libft.a
-#源文件
-SRCS = srcs/main.c \
-       srcs/free.c \
-       srcs/utils1.c \
-	   srcs/01_lexer/lexer.c \
-       srcs/01_lexer/lexer_add_operator.c \
-       srcs/01_lexer/lexer_add_word.c \
-       srcs/01_lexer/lexer_error.c \
-       srcs/01_lexer/lexer_token.c \
-       srcs/01_lexer/lexer_utils.c \
-       srcs/02_parser/parser.c \
-       srcs/02_parser/parser_cmd.c \
-       srcs/02_parser/parser_redir.c \
-       srcs/02_parser/parser_syntax.c
-#自动把.c变成.o
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+LIBFT_FILES = $(wildcard $(LIBFT_DIR)/*.c) \
+			  $(wildcard $(LIBFT_DIR)/*.h) $(LIBFT_DIR)/Makefile
+
+CORE_SRCS = srcs/main.c \
+			srcs/init.c \
+			srcs/free.c
+
+LEXER_SRCS = srcs/lexer/lexer.c \
+			 srcs/lexer/lexer_add_operator.c \
+			 srcs/lexer/lexer_add_word.c \
+			 srcs/lexer/lexer_error.c \
+			 srcs/lexer/lexer_token.c \
+			 srcs/lexer/lexer_utils.c
+
+PARSER_SRCS = srcs/parser/parser.c \
+			  srcs/parser/parser_cmd.c \
+			  srcs/parser/parser_redir.c \
+			  srcs/parser/parser_syntax.c
+
+EXPAND_SRCS = srcs/expand/expand.c \
+			  srcs/expand/expand_buffer.c \
+			  srcs/expand/expand_cmd.c \
+			  srcs/expand/expand_fields.c \
+			  srcs/expand/expand_redir.c \
+			  srcs/expand/expand_var.c \
+			  srcs/expand/expand_word.c
+
+EXEC_SRCS = srcs/exec/exec_cmd.c \
+			srcs/exec/exec_heredoc.c \
+			srcs/exec/exec_pipe.c \
+			srcs/exec/exec_pipe_init.c \
+			srcs/exec/exec_pipe_utils.c \
+			srcs/exec/exec_redir.c \
+			srcs/exec/exec_single.c \
+			srcs/exec/execv.c
+
+BUILTIN_SRCS = srcs/builtin/builtin.c \
+			   srcs/builtin/cd.c \
+			   srcs/builtin/echo.c \
+			   srcs/builtin/env.c \
+			   srcs/builtin/exit.c \
+			   srcs/builtin/export.c \
+			   srcs/builtin/export_print.c \
+			   srcs/builtin/pwd.c \
+			   srcs/builtin/unset.c
+
+ENV_SRCS = srcs/env/env_array.c \
+		   srcs/env/env_get.c \
+		   srcs/env/env_init.c \
+		   srcs/env/env_node.c \
+		   srcs/env/env_print.c \
+		   srcs/env/env_set.c \
+		   srcs/env/env_unset.c \
+		   srcs/env/env_utils.c \
+		   srcs/env/env_valid.c
+
+SIGNAL_SRCS = srcs/signal/signal.c
+
+SRCS = $(CORE_SRCS) $(LEXER_SRCS) $(PARSER_SRCS) $(EXPAND_SRCS) \
+	   $(EXEC_SRCS) $(BUILTIN_SRCS) $(ENV_SRCS) $(SIGNAL_SRCS)
 OBJS = $(SRCS:.c=.o)
-#m默认规则
-all: $(NAME)
-$(LIBFT):
-	make -C libft
-#链接所有.o生成minishell
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
-#编译.c->.o
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-#删除目标文件
-clean:
-	rm -f $(OBJS)
-	make -C libft clean
-#删除目标文件和可执行文件
-fclean: clean
-	rm -f $(NAME)
-	make -C libft fclean
-#完全重新编译
-re: fclean all
-#声明伪目标
-.PHONY: all clean fclean re
 
+all: $(NAME)
+
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LDLIBS) -o $(NAME)
+
+$(LIBFT): $(LIBFT_FILES)
+	$(MAKE) -C $(LIBFT_DIR)
+
+%.o: %.c includes/minishell.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(EXPAND_SRCS:.c=.o): srcs/expand/expand_internal.h
+
+clean:
+	$(RM) $(OBJS)
+	$(MAKE) -C $(LIBFT_DIR) clean
+
+fclean: clean
+	$(RM) $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+
+re: fclean all
+
+.PHONY: all clean fclean re
