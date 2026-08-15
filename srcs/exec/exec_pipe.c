@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 22:10:43 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:41:52 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,17 @@ static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 {
 	int	status;
 
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	/*
+	原因：
+
+minishell 父进程等待 pipeline 时忽略 Ctrl-C。
+cat、grep 等子进程必须恢复系统默认行为。
+否则按 Ctrl-C，pipeline 子进程不会结束。
+
+注意只改 exec_child() 里面的两行。
+	*/
 	if (!dup_pipe_fd(i, exec))
 		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
@@ -72,13 +81,17 @@ static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
 static	void	wait_all_childs(t_shell *shell, t_exec *exec, int count)
 {
 	int	wait_error;
+	int	wait_result;
 	int	i;
 
 	wait_error = 0;//初始化等待的子进程出现错误=0
 	i = 0;
 	while (i < count)
 	{
-		if (waitpid(exec->pids[i], &exec->status, 0) == -1)
+		wait_result = waitpid(exec->pids[i], &exec->status, 0);
+		while (wait_result == -1 && errno == EINTR)
+			wait_result = waitpid(exec->pids[i], &exec->status, 0);
+		if (wait_result == -1)
 		{
 			perror("waitpid");
 			wait_error = 1;

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 22:16:53 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 23:52:33 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,6 @@ void		cleanup_shell(t_shell *shell);
 void	ft_free_arr(char **arr);
 size_t	ft_arrlen(char **arr);
 void	ft_free_t_redir(t_redir *redirs);
-void	setup_heredoc_signals(void);
 int	ft_strcmp(const char *s1, const char *s2);
 void	print_child_signal(int status);
 

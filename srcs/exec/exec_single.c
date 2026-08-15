@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 22:09:37 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:36:43 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,15 @@ void	exec_single(t_shell *shell)
 		close_all_heredoc_fds(shell);
 		exec_cmd(shell->cmds, shell->env);
 	}
-	if (waitpid(pid, &status, 0) == -1)
+	while (waitpid(pid, &status, 0) == -1)
 	{
-		perror("waitpid");
-		shell->exit_status = 1;
-		init_interactive_signals();
-		return ;
+		if (errno != EINTR)
+		{
+			perror("waitpid");
+			shell->exit_status = 1;
+			init_interactive_signals();
+			return ;
+		}
 	}
 	print_child_signal(status);
 	update_exit_status(shell, status);

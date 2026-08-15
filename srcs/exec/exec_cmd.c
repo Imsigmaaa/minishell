@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/28 01:47:12 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 22:32:00 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,11 @@ static	char	*get_path(char *av, t_env *env, int *err_code)
 	char	*path;
 	
 	*err_code = 0;
+	if (!av || !av[0])
+	{
+	*err_code = 127;
+	return (NULL);
+	}
 	path = NULL;
 	if(ft_strchr(av, '/'))//如果执行命令里带有/(包括/ ./ ../)
 	{
@@ -155,6 +160,7 @@ void	exec_cmd(t_cmd *cmds, t_env *env)
 	char	*path;
 	int		err_code;
 
+	
 	path = get_path(cmds->argv[0], env, &err_code);
 	if (!path)
 	{
@@ -168,17 +174,23 @@ void	exec_cmd(t_cmd *cmds, t_env *env)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmds->argv[0], 2);
-			ft_putstr_fd(" No such file or directory\n", 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
 		}
 		else if (err_code == 127)// 不带 /,PATH 里搜不到
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmds->argv[0], 2);
-			ft_putstr_fd(" command not found\n", 2);
+			ft_putstr_fd(": command not found\n", 2);
 		}
 		exit(err_code);//command no found
 	}
 	envp = env_to_array(env);
+	if (!envp)
+	{
+	free(path);
+	perror("malloc");
+	exit(1);
+	}
 	execve(path, cmds->argv, envp);//如果execve执行成功下面的代码不会执行 反之
 	perror("execve");
 	ft_free_arr(envp);
