@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 00:46:17 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 01:50:02 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,5 +195,6 @@ void		print_heredoc_warning(char *delimiter);
 int	init_heredoc_signals(void);
 int	open_heredoc_read(t_shell *shell, t_redir *redir, char *path);
 int	open_heredoc_file(char **path, int number);
-
+char	*get_exec_path(char *av, t_env *env, int *err_code);
+int	is_builtin(t_cmd *cmd);
 #endif

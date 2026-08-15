@@ -3,14 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 14:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 01:49:01 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	is_builtin(t_cmd *cmd)
+{
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+		return (0);
+	if(ft_strcmp(cmd->argv[0], "echo") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "cd") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "pwd") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "export") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "unset") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "env") == 0)
+		return (1);
+	if(ft_strcmp(cmd->argv[0], "exit") == 0)
+		return (1);
+	return (0);
+}
 
 int	exec_builtin(t_shell *shell, t_cmd *cmd)
 {

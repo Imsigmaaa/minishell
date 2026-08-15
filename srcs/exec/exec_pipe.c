@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 22:41:52 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 02:23:35 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 static int	dup_pipe_fd(int i, t_exec *exec)
 {
 	if (i == 0)
-	{	
+	{
 		if (dup2(exec->pipe_fd[0][1], STDOUT_FILENO) == -1)
 			return (perror("dup2"), 0);
 	}
 	else if (i == exec->cmd_count - 1)
 	{
-		if(dup2(exec->pipe_fd[i- 1][0], STDIN_FILENO)== -1)
+		if (dup2(exec->pipe_fd[i - 1][0], STDIN_FILENO) == -1)
 			return (perror("dup2"), 0);
 	}
 	else
 	{
 		if (dup2(exec->pipe_fd[i - 1][0], STDIN_FILENO) == -1
-		|| dup2(exec->pipe_fd[i][1], STDOUT_FILENO) == -1 )
+		|| dup2(exec->pipe_fd[i][1], STDOUT_FILENO) == -1)
 			return (perror("dup2"), 0);
 	}
 	return (1);
@@ -41,34 +41,25 @@ void	close_free_and_exit_child(t_shell *shell, t_exec *exec)
 	exit(1);
 }
 
-static void	exec_child(t_shell *shell,t_cmd *cmd,  int i, t_exec *exec)
+static void	exec_child(t_shell *shell, t_cmd *cmd, int i, t_exec *exec)
 {
 	int	status;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	/*
-	原因：
-
-minishell 父进程等待 pipeline 时忽略 Ctrl-C。
-cat、grep 等子进程必须恢复系统默认行为。
-否则按 Ctrl-C，pipeline 子进程不会结束。
-
-注意只改 exec_child() 里面的两行。
-	*/
 	if (!dup_pipe_fd(i, exec))
 		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
 		close_free_and_exit_child(shell, exec);
 	close_created_fd(exec, exec->cmd_count - 1);
 	close_all_heredoc_fds(shell);
-	if (!cmd->argv || !cmd->argv[0])//Pipeline 中只有重定向、没有命令时直接释放退出
+	if (!cmd->argv || !cmd->argv[0])
 	{
 		free_exec(exec);
-    	exit(0);//如果只有重定向，并且前面的 exec_redir() 已经成功，应该退出 0，不是 1
+		exit(0);
 	}
 	if (is_builtin(cmd))
-    {	
+	{
 		status = exec_builtin(shell, cmd);
 		free_exec(exec);
 		exit(status);
@@ -78,25 +69,33 @@ cat、grep 等子进程必须恢复系统默认行为。
 	exit(126);
 }
 
+int	wait_one_child(t_exec *exec, int i)
+{
+	int	wait_result;
+
+	wait_result = waitpid(exec->pids[i], &exec->status, 0);
+	while (wait_result == -1 && errno == EINTR)
+		wait_result = waitpid(exec->pids[i], &exec->status, 0);
+	if (wait_result == -1)
+	{
+		perror("waitpid");
+		return (0);
+	}
+	return (1);
+}
+
 static	void	wait_all_childs(t_shell *shell, t_exec *exec, int count)
 {
 	int	wait_error;
-	int	wait_result;
 	int	i;
 
-	wait_error = 0;//初始化等待的子进程出现错误=0
+	wait_error = 0;
 	i = 0;
 	while (i < count)
 	{
-		wait_result = waitpid(exec->pids[i], &exec->status, 0);
-		while (wait_result == -1 && errno == EINTR)
-			wait_result = waitpid(exec->pids[i], &exec->status, 0);
-		if (wait_result == -1)
-		{
-			perror("waitpid");
+		if (!(wait_one_child(exec, i)))
 			wait_error = 1;
-		}
-		else if (i == count - 1 )
+		else if (i == count - 1)
 		{
 			print_child_signal(exec->status);
 			update_exit_status(shell, exec->status);
@@ -112,7 +111,7 @@ static	int	fork_children(t_shell *shell, t_exec *exec)
 {
 	int		i;
 	t_cmd	*cur;
-	
+
 	i = 0;
 	cur = shell->cmds;
 	while (i < exec->cmd_count)
@@ -127,7 +126,7 @@ static	int	fork_children(t_shell *shell, t_exec *exec)
 			return (0);
 		}
 		if (exec->pids[i] == 0)
-			exec_child(shell,cur, i, exec);
+			exec_child(shell, cur, i, exec);
 		cur = cur->next;
 		i ++;
 	}
@@ -141,7 +140,7 @@ void	exec_pipe(t_shell *shell)
 	if (!init_exec_data(shell, &exec) || !create_pipes(shell, &exec))
 	{
 		free_exec(&exec);
-		return ;//父进程直接返回
+		return ;
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
@@ -149,10 +148,10 @@ void	exec_pipe(t_shell *shell)
 	{
 		init_interactive_signals();
 		free_exec(&exec);
-		return ;//父进程直接返回
+		return ;
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
 	wait_all_childs(shell, &exec, exec.cmd_count);
 	init_interactive_signals();
 	free_exec(&exec);
-}	
+}

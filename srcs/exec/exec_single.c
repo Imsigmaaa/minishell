@@ -6,75 +6,88 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 22:36:43 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 01:36:39 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static	int	saved_stdio(int	*saved_stdin, int *saved_stdout)
+static	int	saved_stdio(int saved[2])
 {
-	*saved_stdin = dup(STDIN_FILENO);
-	*saved_stdout = dup(STDOUT_FILENO);
-	if (*saved_stdout == -1 || *saved_stdin == -1)
+	saved[0] = dup(STDIN_FILENO);
+	saved[1] = dup(STDOUT_FILENO);
+	if (saved[0] == -1 || saved[1] == -1)
 	{
 		perror("dup");
-		if (*saved_stdout >= 0)
-			close(*saved_stdout);
-		if (*saved_stdin >= 0)
-			close(*saved_stdin);
+		if (saved[0] >= 0)
+			close(saved[0]);
+		if (saved[1] >= 0)
+			close(saved[1]);
 		return (0);
 	}
 	return (1);
 }
 
-static	void	restore_stdio(int	saved_stdin, int saved_stdout)
-{
-	dup2(saved_stdout, STDOUT_FILENO);
-	dup2(saved_stdin, STDIN_FILENO);
-	close(saved_stdout);
-	close(saved_stdin);
-}
-
-static	void	exec_parent_action(t_shell *shell)
-{
-	int	redir_status;
-	
-	redir_status = 0;//初始化为0
-	if (shell->cmds->redirs)//如果有重定向得到重定向状态status
-		redir_status = exec_redir(shell->cmds);
-	if (redir_status == -1)
-    {
-		shell->exit_status = 1;//检查重定向是否失败，失败就停止
-		return ;
-	}
-	if (!shell->cmds->argv || !shell->cmds->argv[0])
-	{
-		shell->exit_status = 0;//重定向成功，但没有命令，所以状态为 0
-		return ;//返回
-	}
-	shell->exit_status = exec_builtin(shell, shell->cmds);
-}
-
 static	void	exec_in_parent(t_shell *shell)
 {
-	int	saved_stdin;
-	int	saved_stdout;
+	t_cmd	*cmd;
+	int		saved[2];
 
-	if (!saved_stdio(&saved_stdin, &saved_stdout))
-	{	
+	cmd = shell->cmds;
+	if (!saved_stdio(saved))
+	{
 		shell->exit_status = 1;
 		return ;
 	}
-	exec_parent_action(shell);
-	restore_stdio(saved_stdin, saved_stdout);
+	if (cmd->redirs && exec_redir(cmd) == -1)
+		shell->exit_status = 1;
+	else if (!cmd->argv || !cmd->argv[0])
+		shell->exit_status = 0;
+	else
+		shell->exit_status = exec_builtin(shell, cmd);
+	dup2(saved[0], STDIN_FILENO);
+	dup2(saved[1], STDOUT_FILENO);
+	close(saved[0]);
+	close(saved[1]);
+}
+
+static void	exec_single_child(t_shell *shell)
+{
+	t_cmd	*cmd;
+
+	cmd = shell->cmds;
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (cmd->redirs && exec_redir(cmd) == -1)
+	{
+		close_all_heredoc_fds(shell);
+		exit(1);
+	}
+	close_all_heredoc_fds(shell);
+	exec_cmd(cmd, shell->env);
+}
+
+static void	wait_single_child(t_shell *shell, pid_t pid)
+{
+	int	status;
+
+	while (waitpid(pid, &status, 0) == -1)
+	{
+		if (errno != EINTR)
+		{
+			perror("waitpid");
+			shell->exit_status = 1;
+			return ;
+		}
+	}
+	print_child_signal(status);
+	update_exit_status(shell, status);
 }
 
 void	exec_single(t_shell *shell)
 {
-	
 	pid_t	pid;
-	int		status;
+
 	if (!shell->cmds->argv || !shell->cmds->argv[0] || is_builtin(shell->cmds))
 	{
 		exec_in_parent(shell);
@@ -87,29 +100,10 @@ void	exec_single(t_shell *shell)
 	{
 		perror("fork");
 		shell->exit_status = 1;
-		init_interactive_signals();
-		return ;
-	}	
-	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		if (shell->cmds->redirs && exec_redir(shell->cmds) == -1)
-			exit(1);
-		close_all_heredoc_fds(shell);
-		exec_cmd(shell->cmds, shell->env);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-	{
-		if (errno != EINTR)
-		{
-			perror("waitpid");
-			shell->exit_status = 1;
-			init_interactive_signals();
-			return ;
-		}
-	}
-	print_child_signal(status);
-	update_exit_status(shell, status);
+	else if (pid == 0)
+		exec_single_child(shell);
+	else
+		wait_single_child(shell, pid);
 	init_interactive_signals();
 }

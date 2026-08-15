@@ -6,13 +6,13 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 23:26:44 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:35:38 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 02:25:02 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void close_created_fd(t_exec *exec, int pipe_count)
+void	close_created_fd(t_exec *exec, int pipe_count)
 {
 	int	j;
 
@@ -41,7 +41,7 @@ void	update_exit_status(t_shell *shell, int status)
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
-		shell->exit_status = 128 + WTERMSIG(status);//WTERMSIG(status) —— 是取具体信号编号(问的是"被哪个信号杀死的?",比如 SIGINT=2, SIGSEGV=11)
+		shell->exit_status = 128 + WTERMSIG(status);
 }
 
 int	count_cmds(t_cmd *cmds)

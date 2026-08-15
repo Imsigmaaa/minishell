@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:54 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/27 21:47:00 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 02:23:05 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ int	exec_redir(t_cmd *cmd)
 			c = STDOUT_FILENO;
 		fd = prepare_redir_fd(redir);
 		if (fd == -1)
-			return(perror(redir->target), -1);
+			return (perror(redir->target), -1);
 		if (dup2(fd, c) == -1)
-			return(perror("dup2"),close_redir_fd(redir, fd), -1);
+			return (perror("dup2"), close_redir_fd(redir, fd), -1);
 		close_redir_fd(redir, fd);
 		redir = redir->next;
 	}

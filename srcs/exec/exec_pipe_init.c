@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 23:25:23 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 21:57:59 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 02:24:32 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	init_exec_data(t_shell *shell, t_exec *exec)
 		if (!exec->pipe_fd)
 		{
 			perror("malloc");
-			free(exec->pids);//释放
+			free(exec->pids);
 			exec->pids = NULL;
 			shell->exit_status = 1;
 			return (0);
@@ -55,7 +55,7 @@ int	create_pipes(t_shell *shell, t_exec *exec)
 	{
 		if (pipe(exec->pipe_fd[i]) == -1)
 		{
-			close_created_fd(exec, i);//释放所有已创建pipe
+			close_created_fd(exec, i);
 			perror("pipe");
 			shell->exit_status = 1;
 			return (0);
