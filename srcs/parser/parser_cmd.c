@@ -6,11 +6,24 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:34:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 00:00:07 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:54:08 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+size_t	ft_arrlen(char **arr)
+{
+	size_t	i;
+
+	i = 0;
+	if(!arr)
+		return (0);
+	while (arr[i])
+		i ++;
+	return i;
+	
+}
 
 t_cmd	*new_cmd(void)
 {
@@ -32,8 +45,8 @@ void	free_cmds(t_cmd *cmds)
 	while (cmds)
 	{
 		tmp = cmds->next;
-		ft_free_arr(cmds->argv);
-		ft_free_t_redir(cmds->redirs);
+		env_free_array(cmds->argv);
+		free_redir(cmds->redirs);
 		free(cmds);
 		cmds = tmp;
 	}

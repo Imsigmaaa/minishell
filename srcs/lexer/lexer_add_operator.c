@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_add_operator.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 23:51:11 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 12:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:43:21 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,19 @@ int	add_operator_token(t_lexer *lex, char *input, int *index)
 		return (unsupported_operator(lex, index, 2));
 	if (input[*index] == '|')
 		return (*index += 1, add_token(lex, TOKEN_PIPE,
-				ms_strdup("|"), 0));
+				ft_strdup("|"), 0));
 	if (input[*index] == '&' || input[*index] == ';'
 		|| input[*index] == '(' || input[*index] == ')')
 		return (unsupported_operator(lex, index, 1));
 	if (input[*index] == '<' && input[*index + 1] == '<')
 		return (*index += 2, add_token(lex, TOKEN_HEREDOC,
-				ms_strdup("<<"), 0));
+				ft_strdup("<<"), 0));
 	if (input[*index] == '<')
 		return (*index += 1, add_token(lex, TOKEN_REDIR_IN,
-				ms_strdup("<"), 0));
+				ft_strdup("<"), 0));
 	if (input[*index] == '>' && input[*index + 1] == '>')
 		return (*index += 2, add_token(lex, TOKEN_APPEND,
-				ms_strdup(">>"), 0));
+				ft_strdup(">>"), 0));
 	return (*index += 1, add_token(lex, TOKEN_REDIR_OUT,
-			ms_strdup(">"), 0));
+			ft_strdup(">"), 0));
 }

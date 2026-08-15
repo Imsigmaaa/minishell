@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 14:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:48:57 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static int	unset_identifier_error(char *argument)
 {
 	write(2, "minishell: unset: `", 19);
-	write(2, argument, ms_strlen(argument));
+	write(2, argument, ft_strlen(argument));
 	write(2, "': not a valid identifier\n", 26);
 	return (1);
 }

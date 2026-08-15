@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 14:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:48:10 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	equal_position(char *argument)
 static int	export_identifier_error(char *argument)
 {
 	write(2, "minishell: export: `", 20);
-	write(2, argument, ms_strlen(argument));
+	write(2, argument, ft_strlen(argument));
 	write(2, "': not a valid identifier\n", 26);
 	return (1);
 }
@@ -41,9 +41,9 @@ static int	export_one(t_shell *shell, char *argument)
 
 	equal = equal_position(argument);
 	if (equal >= 0)
-		key = ms_substr(argument, 0, equal);
+		key = ft_substr(argument, 0, equal);
 	else
-		key = ms_strdup(argument);
+		key = ft_strdup(argument);
 	if (!key)
 		return (perror("malloc"), 1);
 	if (!env_is_valid_key(key))

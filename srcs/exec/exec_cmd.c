@@ -6,25 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 02:02:04 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:34:19 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	int	i;
-
-	i = 0;
-	while (s1[i] && s2[i])
-	{
-		if (s1[i] != s2[i])
-			return (s1[i] - s2[i]);
-		i ++;
-	}
-	return (s1[i] - s2[i]);
-}
 
 void	print_exec_error(t_cmd *cmd, int err_code)
 {
@@ -74,7 +60,7 @@ void	exec_cmd(t_cmd *cmds, t_env *env)
 	}
 	execve(path, cmds->argv, envp);
 	perror("execve");
-	ft_free_arr(envp);
+	env_free_array(envp);
 	free(path);
 	exit(126);
 }

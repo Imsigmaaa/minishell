@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_set.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 23:54:31 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/14 23:55:13 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:50:07 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	env_update_value(t_env *node, char *value)
 
 	if (!value)
 		return (1);
-	new_value = ms_strdup(value);
+	new_value = ft_strdup(value);
 	if (!new_value)
 		return (0);
 	free(node->value);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_buffer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 03:25:16 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	expbuf_add_string(t_expbuf *buffer, char *value, int quoted)
 {
 	t_new_buffer	new;
 
-	new.length = env_strlen(value);
+	new.length = ft_strlen(value);
 	new.text = malloc(buffer->len + new.length + 1);
 	new.quoted = malloc(buffer->len + new.length + 1);
 	if (!new.text || !new.quoted)

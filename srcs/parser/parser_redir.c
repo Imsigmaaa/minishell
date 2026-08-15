@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 00:01:11 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:51:05 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_redir	*new_redir(void)
 	return (redir);
 }
 
-void	ft_free_t_redir(t_redir *redirs)
+void	free_redir(t_redir *redirs)
 {
 	t_redir	*tmp;
 
@@ -60,7 +60,7 @@ int	add_redir(t_cmd *cmd, t_token *tokens)
 	redir->type = tokens->type;
 	redir->target = ft_strdup(tokens->next->value);
 	if (!redir->target)
-		return (perror("malloc"), ft_free_t_redir(redir), 0);
+		return (perror("malloc"), free_redir(redir), 0);
 	if (!cmd->redirs)
 		cmd->redirs = redir;
 	else

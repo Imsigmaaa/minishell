@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 00:08:29 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 01:06:20 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:36:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static	int	write_heredoc(t_shell *shell, t_redir *redir, int fd)
 			print_heredoc_warning(redir->target);
 			break ;
 		}
-		if (ft_strcmp(line, redir->target) == 0)
+		if (env_strcmp(line, redir->target) == 0)
 		{
 			free(line);
 			break ;

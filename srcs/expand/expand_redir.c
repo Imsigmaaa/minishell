@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redir.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:46:12 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	expand_file_redir(t_shell *shell, t_redir *redir)
 	if (fields.count != 1)
 	{
 		write(2, "minishell: ", 11);
-		write(2, redir->target, ms_strlen(redir->target));
+		write(2, redir->target, ft_strlen(redir->target));
 		write(2, ": ambiguous redirect\n", 21);
 		fields_free(&fields);
 		shell->exit_status = 1;

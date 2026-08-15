@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 14:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:47:39 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int	parse_exit_number(char *argument, long long *number)
 static int	exit_numeric_error(char *argument)
 {
 	write(2, "minishell: exit: ", 17);
-	write(2, argument, ms_strlen(argument));
+	write(2, argument, ft_strlen(argument));
 	write(2, ": numeric argument required\n", 28);
 	return (2);
 }

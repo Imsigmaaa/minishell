@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_add_word.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 23:51:30 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 12:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:44:08 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	add_word_token(t_lexer *lex, char *input, int *index)
 		lex->err = LEX_ERR_UNCLOSED_QUOTE;
 		return (0);
 	}
-	value = ms_substr(input, start, end - start);
+	value = ft_substr(input, start, end - start);
 	if (!value)
 	{
 		lex->err = LEX_ERR_MALLOC;

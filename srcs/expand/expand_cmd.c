@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 03:24:21 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int	add_word_fields(t_fields *output, char *word, t_shell *shell,
 	i = -1;
 	while (++i < fields.count)
 		if (!fields_add(output, fields.items[i], 0,
-				env_strlen(fields.items[i])))
+				ft_strlen(fields.items[i])))
 			return (fields_free(&fields), 0);
 	fields_free(&fields);
 	return (1);

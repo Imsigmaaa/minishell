@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 23:53:13 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/14 23:53:28 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:49:27 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ static t_env	*env_from_string(char *str)
 	int		len;
 
 	len = env_key_len(str);
-	key = ms_substr(str, 0, len);
+	key = ft_substr(str, 0, len);
 	if (!key)
 		return (NULL);
 	value = NULL;
 	if (str[len] == '=')
-		value = ms_strdup(str + len + 1);
+		value = ft_strdup(str + len + 1);
 	if (str[len] == '=' && !value)
 		return (free(key), NULL);
 	node = env_new(key, value, 1);

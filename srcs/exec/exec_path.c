@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 01:38:07 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 01:47:29 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:35:08 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static	char	*get_path_from_env(char *av, t_env *env, int *err_code)
 	char	*path;
 
 	tmp = env;
-	while (tmp && ft_strcmp(tmp->key, "PATH") != 0)
+	while (tmp && env_strcmp(tmp->key, "PATH") != 0)
 		tmp = tmp->next;
 	if (!tmp || !tmp->value)
 	{
@@ -89,7 +89,7 @@ static	char	*get_path_from_env(char *av, t_env *env, int *err_code)
 		return (NULL);
 	}
 	path = find_valid_path(av, all_paths, err_code);
-	ft_free_arr(all_paths);
+	env_free_array(all_paths);
 	return (path);
 }
 

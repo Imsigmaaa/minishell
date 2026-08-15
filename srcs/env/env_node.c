@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_node.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 23:52:24 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/14 23:53:03 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:49:50 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ t_env	*env_new(char *key, char *value, int exported)
 	node = malloc(sizeof(t_env));
 	if (!node)
 		return (NULL);
-	node->key = ms_strdup(key);
+	node->key = ft_strdup(key);
 	if (!node->key)
 		return (free(node), NULL);
 	node->value = NULL;
 	if (value)
-		node->value = ms_strdup(value);
+		node->value = ft_strdup(value);
 	if (value && !node->value)
 		return (free(node->key), free(node), NULL);
 	node->exported = exported;

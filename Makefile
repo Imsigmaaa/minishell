@@ -13,8 +13,6 @@ LIBFT_FILES = $(wildcard $(LIBFT_DIR)/*.c) \
 
 CORE_SRCS = srcs/main.c \
 			srcs/init.c \
-			srcs/free.c \
-			srcs/utils1.c
 
 LEXER_SRCS = srcs/lexer/lexer.c \
 			 srcs/lexer/lexer_add_operator.c \
@@ -37,8 +35,9 @@ EXPAND_SRCS = srcs/expand/expand.c \
 			  srcs/expand/expand_word.c
 
 EXEC_SRCS = srcs/exec/exec_cmd.c \
-			srcs/exec/exec_path.c
+			srcs/exec/exec_path.c \
 			srcs/exec/exec_pipe.c \
+			srcs/exec/exec_pipe_child.c \
 			srcs/exec/exec_pipe_init.c \
 			srcs/exec/exec_pipe_utils.c \
 			srcs/exec/exec_redir.c \

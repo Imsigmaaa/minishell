@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 03:05:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,10 @@ static int	is_var_char(char character)
 
 static char	*status_to_string(int status)
 {
-	char	digits[12];
-	char	*value;
-	int		i;
-	int		length;
 
 	if (status < 0)
 		status = 0;
-	digits[11] = '\0';
-	i = 11;
-	while (status > 0)
-	{
-		digits[--i] = '0' + status % 10;
-		status /= 10;
-	}
-	if (i == 11)
-		digits[--i] = '0';
-	length = 11 - i;
-	value = ms_substr(digits, i, length);
-	return (value);
+	return (ft_itoa(status));
 }
 
 static int	expand_status(t_expand_ctx *context)
@@ -63,7 +48,7 @@ static int	expand_named(t_expand_ctx *context, int start, int length)
 	char	*value;
 	int		result;
 
-	key = ms_substr(context->word, start, length);
+	key = ft_substr(context->word, start, length);
 	if (!key)
 		return (0);
 	value = env_get(context->shell->env, key);

@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 20:53:32 by xingchen          #+#    #+#             */
-/*   Updated: 2026/04/19 18:49:26 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:49:05 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ char	*ft_strrchr(const char *s, int c);
 char	*ft_strdup(const char *s);
 char	*ft_strndup(const char *s, size_t n);
 size_t	ft_strlen(const char *s);
-size_t	ft_arrlen(char **arr);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
 size_t	ft_strlcat(char *dest, const char *src, size_t size);
 

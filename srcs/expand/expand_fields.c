@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_fields.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 02:44:46 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	fields_add(t_fields *fields, char *text, int start, int length)
 	char	*value;
 	int		i;
 
-	value = ms_substr(text, start, length);
+	value = ft_substr(text, start, length);
 	if (!value)
 		return (0);
 	new_items = malloc(sizeof(char *) * (fields->count + 2));

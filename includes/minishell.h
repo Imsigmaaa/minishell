@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 01:50:02 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 03:52:04 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <signal.h>
-#include "libft.h"
+# include "libft.h"
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -104,6 +103,8 @@ typedef struct s_exec
 
 extern volatile sig_atomic_t	g_signal;
 
+/* Lexer */
+
 int			is_space(char c);
 int			is_operator_char(char c);
 int			add_word_token(t_lexer *lex, char *input, int *index);
@@ -112,9 +113,118 @@ int			add_token(t_lexer *lex, t_token_type type, char *value,
 				int has_quote);
 t_token		*lexer(char *input, int *err);
 void		print_lexer_error(int err);
-char		*ms_strdup(char *str);
-char		*ms_substr(char *str, int start, int len);
-size_t		ms_strlen(char *str);
+void		free_tokens(t_token **tokens);
+
+/* Parser */
+
+int			syntax_check(t_token *tokens);
+int			syntax_error(char *token);
+t_cmd		*parse_tokens(t_token *tokens);
+t_cmd		*new_cmd(void);
+int			add_arg(t_cmd *cmd, t_token *token);
+int			is_redir_token(t_token_type type);
+int			add_redir(t_cmd *cmd, t_token *token);
+void		free_cmds(t_cmd *cmds);
+
+/* Environment */
+
+int			env_strcmp(char *str1, char *str2);
+char		*env_join_pair(char *key, char *value);
+t_env		*env_new(char *key, char *value, int exported);
+void		env_add_back(t_env **env, t_env *new_node);
+void		env_free(t_env **env);
+t_env		*env_init(char **envp);
+t_env		*env_find(t_env *env, char *key);
+char		*env_get(t_env *env, char *key);
+int			env_set(t_env **env, char *key, char *value, int exported);
+int			env_unset(t_env **env, char *key);
+char		**env_to_array(t_env *env);
+void		env_free_array(char **array);
+int			env_is_valid_key(char *key);
+void		env_print(t_env *env);
+void		env_print_export(t_env *env);
+
+/* Expansion */
+
+int			expansion(t_shell *shell);
+char		*expand_heredoc_line(char *line, t_shell *shell);
+
+/* Executor */
+
+int			executor(t_shell *shell);
+void		exec_single(t_shell *shell);
+void		exec_pipe(t_shell *shell);
+void		exec_cmd(t_cmd *cmd, t_env *env);
+char		*get_exec_path(char *av, t_env *env, int *err_code);
+void		print_exec_error(t_cmd *cmd, int err_code);
+
+/* Pipe */
+
+int			init_exec_data(t_shell *shell, t_exec *exec);
+int			create_pipes(t_shell *shell, t_exec *exec);
+void		close_created_fd(t_exec *exec, int created_pipes);
+void		free_exec(t_exec *exec);
+void		update_exit_status(t_shell *shell, int status);
+int			count_cmds(t_cmd *cmds);
+void		wait_all_children(t_shell *shell, t_exec *exec, int count);
+
+/* Redirections */
+
+int			exec_redir(t_cmd *cmd);
+
+/* Heredoc */
+
+int			prepare_all_heredocs(t_shell *shell);
+void		close_all_heredoc_fds(t_shell *shell);
+char		*get_heredoc_path(int index);
+int			open_heredoc_file(char **path, int number);
+int			open_heredoc_read(t_shell *shell, t_redir *redir,
+				char *path);
+void		remove_heredoc_file(char *path);
+void		print_heredoc_warning(char *delimiter);
+pid_t		run_heredoc_child(t_shell *shell, t_redir *redir, int fd);
+int			wait_heredoc_child(pid_t pid, int *status);
+
+/* Builtins */
+
+int			is_builtin(t_cmd *cmd);
+int			exec_builtin(t_shell *shell, t_cmd *cmd);
+int			builtin_echo(t_cmd *cmd);
+int			builtin_cd(t_shell *shell, t_cmd *cmd);
+int			builtin_pwd(t_cmd *cmd);
+int			builtin_export(t_shell *shell, t_cmd *cmd);
+int			builtin_unset(t_shell *shell, t_cmd *cmd);
+int			builtin_env(t_shell *shell, t_cmd *cmd);
+int			builtin_exit(t_shell *shell, t_cmd *cmd);
+void		print_export_sorted(t_env *env);
+
+/* Signals */
+
+int			init_interactive_signals(void);
+int			init_heredoc_signals(void);
+void		sync_signal_status(t_shell *shell);
+void		print_child_signal(int status);
+
+/* Shell  */
+
+int			init_shell(t_shell *shell, char **envp);
+void		free_line_data(t_shell *shell);
+void		cleanup_shell(t_shell *shell);
+
+/* Utils  */
+
+size_t		ft_arrlen(char **arr);
+void		free_redir(t_redir *redirs);
+
+/*
+int			is_space(char c);
+int			is_operator_char(char c);
+int			add_word_token(t_lexer *lex, char *input, int *index);
+int			add_operator_token(t_lexer *lex, char *input, int *index);
+int			add_token(t_lexer *lex, t_token_type type, char *value,
+				int has_quote);
+t_token		*lexer(char *input, int *err);
+void		print_lexer_error(int err);
 void		free_tokens(t_token **tokens);
 
 int			syntax_check(t_token *tokens);
@@ -126,7 +236,6 @@ int			is_redir_token(t_token_type type);
 int			add_redir(t_cmd *cmd, t_token *token);
 void		free_cmds(t_cmd *cmds);
 
-int			env_strlen(char *str);
 int			env_strcmp(char *str1, char *str2);
 char		*env_join_pair(char *key, char *value);
 t_env		*env_new(char *key, char *value, int exported);
@@ -157,7 +266,6 @@ void		free_exec(t_exec *exec);
 void		update_exit_status(t_shell *shell, int status);
 int			count_cmds(t_cmd *cmds);
 void		wait_all_children(t_shell *shell, t_exec *exec, int count);
-void		print_exec_error(char *command, int error);
 int			exec_redir(t_cmd *cmd);
 int			prepare_all_heredocs(t_shell *shell);
 void		close_all_heredoc_fds(t_shell *shell);
@@ -197,4 +305,5 @@ int	open_heredoc_read(t_shell *shell, t_redir *redir, char *path);
 int	open_heredoc_file(char **path, int number);
 char	*get_exec_path(char *av, t_env *env, int *err_code);
 int	is_builtin(t_cmd *cmd);
+void	wait_all_children(t_shell *shell, t_exec *exec, int count);*/
 #endif

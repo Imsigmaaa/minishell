@@ -3,24 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 23:51:37 by yushan            #+#    #+#             */
-/*   Updated: 2026/06/14 23:52:17 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/16 03:26:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	env_strlen(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s && s[i])
-		i++;
-	return (i);
-}
 
 int	env_strcmp(char *s1, char *s2)
 {
@@ -40,7 +30,7 @@ char	*env_join_pair(char *key, char *value)
 	int		i;
 	int		j;
 
-	str = malloc(env_strlen(key) + env_strlen(value) + 2);
+	str = malloc(ft_strlen(key) + ft_strlen(value) + 2);
 	if (!str)
 		return (NULL);
 	i = 0;
