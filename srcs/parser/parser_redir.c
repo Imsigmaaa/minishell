@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:40:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 21:49:57 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 00:01:11 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ int	is_redir_token(t_token_type type)
 t_redir	*new_redir(void)
 {
 	t_redir	*redir;
-	
+
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
-		return NULL;
+		return (NULL);
 	redir->target = NULL;
 	redir->heredoc_fd = -1;
 	redir->heredoc_expand = 1;
@@ -56,11 +56,11 @@ int	add_redir(t_cmd *cmd, t_token *tokens)
 
 	redir = new_redir();
 	if (!redir)
-		return(perror("malloc"), 0);//如果malloc失败打印malloc错误
-	redir->type = tokens->type;//将这个类型复制到重定向里
+		return (perror("malloc"), 0);
+	redir->type = tokens->type;
 	redir->target = ft_strdup(tokens->next->value);
 	if (!redir->target)
-		return (perror("malloc"),ft_free_t_redir(redir), 0);
+		return (perror("malloc"), ft_free_t_redir(redir), 0);
 	if (!cmd->redirs)
 		cmd->redirs = redir;
 	else

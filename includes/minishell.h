@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 23:52:33 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 00:46:17 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,5 +187,13 @@ size_t	ft_arrlen(char **arr);
 void	ft_free_t_redir(t_redir *redirs);
 int	ft_strcmp(const char *s1, const char *s2);
 void	print_child_signal(int status);
+char		*get_heredoc_path(int index);
+pid_t	run_heredoc_child(t_shell *shell, t_redir *redir, int fd);
+int		wait_heredoc_child(pid_t pid, int *status);
+void		remove_heredoc_file(char *path);
+void		print_heredoc_warning(char *delimiter);
+int	init_heredoc_signals(void);
+int	open_heredoc_read(t_shell *shell, t_redir *redir, char *path);
+int	open_heredoc_file(char **path, int number);
 
 #endif

@@ -37,13 +37,16 @@ EXPAND_SRCS = srcs/expand/expand.c \
 			  srcs/expand/expand_word.c
 
 EXEC_SRCS = srcs/exec/exec_cmd.c \
-			srcs/exec/exec_heredoc.c \
 			srcs/exec/exec_pipe.c \
 			srcs/exec/exec_pipe_init.c \
 			srcs/exec/exec_pipe_utils.c \
 			srcs/exec/exec_redir.c \
 			srcs/exec/exec_single.c \
 			srcs/exec/execv.c
+
+HEREDOC_SRCS = srcs/heredoc/heredoc.c \
+			   srcs/heredoc/heredoc_child.c \
+			   srcs/heredoc/heredoc_file.c
 
 BUILTIN_SRCS = srcs/builtin/builtin.c \
 			   srcs/builtin/cd.c \
@@ -68,7 +71,9 @@ ENV_SRCS = srcs/env/env_array.c \
 SIGNAL_SRCS = srcs/signal/signal.c
 
 SRCS = $(CORE_SRCS) $(LEXER_SRCS) $(PARSER_SRCS) $(EXPAND_SRCS) \
-	   $(EXEC_SRCS) $(BUILTIN_SRCS) $(ENV_SRCS) $(SIGNAL_SRCS)
+	   $(EXEC_SRCS) $(HEREDOC_SRCS) $(BUILTIN_SRCS) $(ENV_SRCS) \
+	   $(SIGNAL_SRCS)
+
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)

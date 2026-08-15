@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 15:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 23:52:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 00:42:33 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,20 @@ void	sync_signal_status(t_shell *shell)
 	g_signal = 0;
 }
 
+int	init_heredoc_signals(void)
+{
+	struct sigaction	action;
+
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	action.sa_handler = SIG_DFL;
+	if (sigaction(SIGINT, &action, NULL) < 0)
+		return (perror("sigaction"), 0);
+	action.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &action, NULL) < 0)
+		return (perror("sigaction"), 0);
+	return (1);
+}
 
 void	print_child_signal(int status)
 {

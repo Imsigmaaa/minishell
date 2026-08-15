@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:34:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/15 21:08:06 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 00:00:07 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_cmd	*new_cmd(void)
 {
-	t_cmd *cmd;
+	t_cmd	*cmd;
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
@@ -39,13 +39,14 @@ void	free_cmds(t_cmd *cmds)
 	}
 }
 
-static	void	append_value(char **new_argv, char *value, char **av, size_t size)
+static	void	append_value(char **new_argv, char *value,
+					char **av, size_t size)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < size)
-	{	
+	{
 		new_argv[i] = av[i];
 		i ++;
 	}
@@ -56,17 +57,17 @@ static	void	append_value(char **new_argv, char *value, char **av, size_t size)
 
 int	add_arg(t_cmd *cmd, t_token *token)
 {
-	char **tmp;
-	char *value;
+	char	**tmp;
+	char	*value;
 	size_t	size;
-	
+
 	value = ft_strdup(token->value);
 	if (!value)
 		return (perror("malloc"), 0);
 	size = ft_arrlen(cmd->argv);
 	tmp = malloc(sizeof(char *) * (size + 2));
 	if (!tmp)
-		return (free(value),perror("malloc"), 0);
+		return (free(value), perror("malloc"), 0);
 	append_value(tmp, value, cmd->argv, size);
 	free(cmd->argv);
 	cmd->argv = tmp;

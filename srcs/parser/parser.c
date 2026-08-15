@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 21:38:26 by xingchen          #+#    #+#             */
-/*   Updated: 2026/07/23 17:05:17 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/15 23:59:13 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ t_cmd	*parse_tokens(t_token *tokens)
 	t_cmd	*cmds;
 	t_cmd	*cur_cmd;
 	t_token	*cur_tok;
-	
+
 	if (!tokens || tokens->type == TOKEN_EOF)
 		return (NULL);
 	cur_tok = tokens;
