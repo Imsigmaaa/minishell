@@ -36,6 +36,7 @@ EXPAND_SRCS = srcs/expand/expand.c \
 
 EXEC_SRCS = srcs/exec/exec_cmd.c \
 			srcs/exec/exec_path.c \
+			srcs/exec/exec_path_split.c \
 			srcs/exec/exec_pipe.c \
 			srcs/exec/exec_pipe_child.c \
 			srcs/exec/exec_pipe_init.c \

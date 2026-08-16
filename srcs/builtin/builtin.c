@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 03:32:39 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:22:29 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@ int	is_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 		return (0);
-	if(env_strcmp(cmd->argv[0], "echo") == 0)
+	if (env_strcmp(cmd->argv[0], "echo") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "cd") == 0)
+	if (env_strcmp(cmd->argv[0], "cd") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "pwd") == 0)
+	if (env_strcmp(cmd->argv[0], "pwd") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "export") == 0)
+	if (env_strcmp(cmd->argv[0], "export") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "unset") == 0)
+	if (env_strcmp(cmd->argv[0], "unset") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "env") == 0)
+	if (env_strcmp(cmd->argv[0], "env") == 0)
 		return (1);
-	if(env_strcmp(cmd->argv[0], "exit") == 0)
+	if (env_strcmp(cmd->argv[0], "exit") == 0)
 		return (1);
 	return (0);
 }

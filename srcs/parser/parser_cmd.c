@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 00:34:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 03:54:08 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:23:36 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,11 @@ size_t	ft_arrlen(char **arr)
 	size_t	i;
 
 	i = 0;
-	if(!arr)
+	if (!arr)
 		return (0);
 	while (arr[i])
 		i ++;
-	return i;
-	
+	return (i);
 }
 
 t_cmd	*new_cmd(void)

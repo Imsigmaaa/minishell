@@ -6,13 +6,13 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 11:06:05 by xingchen          #+#    #+#             */
-/*   Updated: 2026/04/21 18:03:58 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:20:32 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-	void	gnl_memcpy(char *dup, char *s, size_t n)
+void	gnl_memcpy(char *dup, char *s, size_t n)
 {
 	size_t	i;
 
@@ -27,7 +27,7 @@
 	return ;
 }
 
-	int	is_line_in_buffer(char *buffer)
+int	is_line_in_buffer(char *buffer)
 {
 	int	i;
 

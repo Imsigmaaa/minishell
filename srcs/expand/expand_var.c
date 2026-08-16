@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 13:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 03:05:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:21:41 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static int	is_var_char(char character)
 
 static char	*status_to_string(int status)
 {
-
 	if (status < 0)
 		status = 0;
 	return (ft_itoa(status));

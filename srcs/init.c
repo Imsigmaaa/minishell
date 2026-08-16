@@ -6,11 +6,11 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/04 14:28:17 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 03:54:19 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:21:01 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"minishell.h"
+#include "minishell.h"
 
 int	init_shell(t_shell *shell, char **envp)
 {

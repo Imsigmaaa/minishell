@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 01:38:07 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 03:35:08 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 21:00:51 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static	char	*get_path_from_env(char *av, t_env *env, int *err_code)
 		*err_code = 127;
 		return (NULL);
 	}
-	all_paths = ft_split(tmp->value, ':');
+	all_paths = split_exec_path(tmp->value);
 	if (!all_paths)
 	{
 		*err_code = 1;

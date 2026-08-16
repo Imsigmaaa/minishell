@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 03:52:04 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/16 22:24:21 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # include "libft.h"
+
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -156,6 +157,7 @@ void		exec_single(t_shell *shell);
 void		exec_pipe(t_shell *shell);
 void		exec_cmd(t_cmd *cmd, t_env *env);
 char		*get_exec_path(char *av, t_env *env, int *err_code);
+char		**split_exec_path(char *path);
 void		print_exec_error(t_cmd *cmd, int err_code);
 
 /* Pipe */
