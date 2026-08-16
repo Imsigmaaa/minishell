@@ -12,25 +12,17 @@
 
 #include "minishell.h"
 
-static	void	set_heredoc_error_status(t_shell *shell)
-{
-	close_all_heredoc_fds(shell);
-	if (g_signal == SIGINT)
-		shell->exit_status = 130;
-	else
-		shell->exit_status = 1;
-	g_signal = 0;
-}
-
 int	executor(t_shell *shell)
 {
 	if (!shell->cmds)
 		return (shell->exit_status);
 	if (!prepare_all_heredocs(shell))
 	{
-		set_heredoc_error_status(shell);
+		close_all_heredoc_fds(shell);
+		init_interactive_signals();
 		return (shell->exit_status);
 	}
+	init_interactive_signals();
 	if (count_cmds(shell->cmds) == 1)
 		exec_single(shell);
 	else
