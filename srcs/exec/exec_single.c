@@ -104,6 +104,9 @@ void	exec_single(t_shell *shell)
 	else if (pid == 0)
 		exec_single_child(shell);
 	else
+	{
 		wait_single_child(shell, pid);
+		close_all_heredoc_fds(shell);
+	}
 	init_interactive_signals();
 }
