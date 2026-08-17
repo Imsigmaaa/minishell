@@ -6,14 +6,23 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 03:34:19 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/17 23:41:01 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void	print_cmd_error(t_cmd *cmd, char *msg)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd->argv[0], 2);
+	ft_putstr_fd(msg, 2);
+}
+
 void	print_exec_error(t_cmd *cmd, int err_code)
 {
+	struct stat	st;
+
 	if (err_code == 1)
 	{
 		perror("malloc");
@@ -21,22 +30,15 @@ void	print_exec_error(t_cmd *cmd, int err_code)
 	}
 	if (err_code == 126)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->argv[0], 2);
-		ft_putstr_fd(": Permission denied\n", 2);
+		if (stat(cmd->argv[0], &st) == 0 && S_ISDIR(st.st_mode))
+			print_cmd_error(cmd, ": Is a directory\n");
+		else
+			print_cmd_error(cmd, ": Permission denied\n");
 	}
 	else if (err_code == 127 && ft_strchr(cmd->argv[0], '/'))
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->argv[0], 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-	}
+		print_cmd_error(cmd, ": No such file or directory\n");
 	else if (err_code == 127)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->argv[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
-	}
+		print_cmd_error(cmd, ": command not found\n");
 }
 
 void	exec_cmd(t_cmd *cmds, t_env *env)
