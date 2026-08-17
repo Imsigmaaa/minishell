@@ -114,6 +114,7 @@ void	exec_pipe(t_shell *shell)
 	}
 	close_created_fd(&exec, exec.cmd_count - 1);
 	wait_all_children(shell, &exec, exec.cmd_count);
+	close_all_heredoc_fds(shell);
 	init_interactive_signals();
 	free_exec(&exec);
 }
