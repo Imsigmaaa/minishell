@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-#include "minishell.h"
-
 static int	check_heredoc_status(t_shell *shell, int status)
 {
 	if (WIFSIGNALED(status))
