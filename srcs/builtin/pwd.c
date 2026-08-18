@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 02:48:40 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/18 04:43:40 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ int	builtin_pwd(t_cmd *cmd)
 {
 	char	*directory;
 
-	if (cmd->argv[1])
-		return (write(2, "minishell: pwd: too many arguments\n", 35), 1);
+	(void)cmd;
 	directory = getcwd(NULL, 0);
 	if (!directory)
 		return (perror("pwd"), 1);

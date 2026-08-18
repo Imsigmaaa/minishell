@@ -6,11 +6,9 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 00:37:14 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/19 02:00:20 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 #include "minishell.h"
 
