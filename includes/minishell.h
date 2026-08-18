@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 22:24:21 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/19 03:40:40 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ char		*expand_heredoc_line(char *line, t_shell *shell);
 
 /* Executor */
 
-int			executor(t_shell *shell);
+void		executor(t_shell *shell);
 void		exec_single(t_shell *shell);
 void		exec_pipe(t_shell *shell);
 void		exec_cmd(t_cmd *cmd, t_env *env);
@@ -206,7 +206,9 @@ int			init_interactive_signals(void);
 int			init_heredoc_signals(void);
 void		sync_signal_status(t_shell *shell);
 void		print_child_signal(int status);
-
+void		ignore_signals(void);
+void		ignore_signals(void);
+void		default_signals(void);
 /* Shell  */
 
 int			init_shell(t_shell *shell, char **envp);

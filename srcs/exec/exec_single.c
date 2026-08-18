@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:12:35 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 01:36:39 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/19 03:41:30 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ static void	exec_single_child(t_shell *shell)
 	t_cmd	*cmd;
 
 	cmd = shell->cmds;
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	default_signals();
 	if (cmd->redirs && exec_redir(cmd) == -1)
 	{
 		close_all_heredoc_fds(shell);
@@ -93,8 +92,7 @@ void	exec_single(t_shell *shell)
 		exec_in_parent(shell);
 		return ;
 	}
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	ignore_signals();
 	pid = fork();
 	if (pid == -1)
 	{

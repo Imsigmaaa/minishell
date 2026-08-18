@@ -43,7 +43,7 @@ EXEC_SRCS = srcs/exec/exec_cmd.c \
 			srcs/exec/exec_pipe_utils.c \
 			srcs/exec/exec_redir.c \
 			srcs/exec/exec_single.c \
-			srcs/exec/execv.c
+			srcs/exec/executor.c
 
 HEREDOC_SRCS = srcs/heredoc/heredoc.c \
 			   srcs/heredoc/heredoc_child.c \
@@ -69,7 +69,8 @@ ENV_SRCS = srcs/env/env_array.c \
 		   srcs/env/env_utils.c \
 		   srcs/env/env_valid.c
 
-SIGNAL_SRCS = srcs/signal/signal.c
+SIGNAL_SRCS = srcs/signal/signal.c \
+ 			  srcs/signal/signal_exec.c
 
 SRCS = $(CORE_SRCS) $(LEXER_SRCS) $(PARSER_SRCS) $(EXPAND_SRCS) \
 	   $(EXEC_SRCS) $(HEREDOC_SRCS) $(BUILTIN_SRCS) $(ENV_SRCS) \
