@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/16 02:47:39 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 14:04:09 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	builtin_exit(t_shell *shell, t_cmd *cmd)
 		return (exit_numeric_error(cmd->argv[1]));
 	}
 	if (cmd->argv[2])
-		return (write(2, "minishell: exit: too many arguments\n", 36), 1);
+		return (write(2, "minishell: exit: too many arguments\n", 36), 2);
 	status = number % 256;
 	if (status < 0)
 		status += 256;

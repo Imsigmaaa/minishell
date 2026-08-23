@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 14:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 14:00:00 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/23 14:03:02 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	builtin_cd(t_shell *shell, t_cmd *cmd)
 	int		status;
 
 	if (cmd->argv[1] && cmd->argv[2])
-		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
+		return (write(2, "minishell: cd: too many arguments\n", 34), 2);
 	target = cd_target(shell, cmd);
 	if (!target)
 		return (1);
