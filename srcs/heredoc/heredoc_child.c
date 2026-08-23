@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 00:08:29 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 03:36:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 02:20:13 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,7 @@ pid_t	run_heredoc_child(t_shell *shell, t_redir *redir, int fd)
 		shell->exit_status = 1;
 		return (-1);
 	}
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	ignore_signals();
 	return (pid);
 }
 

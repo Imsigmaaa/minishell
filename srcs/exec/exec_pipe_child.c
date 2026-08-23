@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 02:31:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 02:34:59 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/19 09:06:37 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,16 @@ static	int	wait_one_child(t_exec *exec, int i)
 
 void	wait_all_children(t_shell *shell, t_exec *exec, int count)
 {
-	int	wait_error;
 	int	i;
 
-	wait_error = 0;
 	i = 0;
 	while (i < count)
 	{
 		if (!(wait_one_child(exec, i)))
-			wait_error = 1;
+		{
+			if (i == count - 1)
+				shell->exit_status = 1;
+		}
 		else if (i == count - 1)
 		{
 			print_child_signal(exec->status);
@@ -45,7 +46,4 @@ void	wait_all_children(t_shell *shell, t_exec *exec, int count)
 		}
 		i ++;
 	}
-	if (wait_error)
-		shell->exit_status = 1;
-	return ;
 }

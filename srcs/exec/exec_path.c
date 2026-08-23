@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 01:38:07 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 21:00:51 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 06:08:45 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static	char	*find_valid_path(char *av, char **all_paths, int *err_code)
 		if (status == 0)
 			return (new_path);
 		if (status == 126)
-			no_permission = 1;
+			no_permission = 1;																													
 		free(new_path);
 		i ++;
 	}

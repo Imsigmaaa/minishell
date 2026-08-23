@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/16 02:35:48 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/22 02:49:03 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,7 @@ static void	exec_child(t_shell *shell, t_cmd *cmd, int i, t_exec *exec)
 {
 	int	status;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	default_signals();
 	if (!dup_pipe_fd(i, exec))
 		close_free_and_exit_child(shell, exec);
 	if (cmd->redirs && exec_redir(cmd) == -1)
@@ -104,8 +103,7 @@ void	exec_pipe(t_shell *shell)
 		free_exec(&exec);
 		return ;
 	}
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	ignore_signals();
 	if (!fork_children(shell, &exec))
 	{
 		init_interactive_signals();
