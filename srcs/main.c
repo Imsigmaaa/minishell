@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yushan <yushan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 12:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/15 13:07:58 by yushan           ###   ########.fr       */
+/*   Updated: 2026/08/23 15:55:55 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ static int	read_input(t_shell *shell)
 	return (1);
 }
 
-/* MODIFIED: prompt signal behavior is installed before the readline loop. */
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;

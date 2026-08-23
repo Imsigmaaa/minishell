@@ -142,6 +142,8 @@ minishell$ echo $?
 
 minishell$ exit
 ```
+
+
 ### Leak check
 
 To check memory leaks and open file descriptors:
