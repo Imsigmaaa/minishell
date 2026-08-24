@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/15 15:00:00 by yushan            #+#    #+#             */
-/*   Updated: 2026/08/23 16:05:07 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/24 19:18:58 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,19 @@ void	sync_signal_status(t_shell *shell)
 	g_signal = 0;
 }
 
+static	void	handle_heredoc_signal(int signal_number)
+{
+	g_signal = signal_number;
+	close(STDIN_FILENO);
+}
+
 int	init_heredoc_signals(void)
 {
 	struct sigaction	action;
 
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0;
-	action.sa_handler = SIG_DFL;
+	action.sa_handler = handle_heredoc_signal;
 	if (sigaction(SIGINT, &action, NULL) < 0)
 		return (perror("sigaction"), 0);
 	action.sa_handler = SIG_IGN;
@@ -61,15 +67,3 @@ int	init_heredoc_signals(void)
 	return (1);
 }
 
-void	print_child_signal(int status)
-{
-	int	signal_number;
-
-	if (!WIFSIGNALED(status))
-		return ;
-	signal_number = WTERMSIG(status);
-	if (signal_number == SIGINT)
-		write(STDOUT_FILENO, "\n", 1);
-	else if (signal_number == SIGQUIT)
-		write(STDERR_FILENO, "Quit: 3\n", 8);
-}

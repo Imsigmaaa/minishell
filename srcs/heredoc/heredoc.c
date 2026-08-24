@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:35:00 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/19 02:00:20 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/24 22:04:28 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,11 @@
 
 static int	check_heredoc_status(t_shell *shell, int status)
 {
-	if (WIFSIGNALED(status))
-	{
-		shell->exit_status = 128 + WTERMSIG(status);
-		if (WTERMSIG(status) == SIGINT)
-			write(STDOUT_FILENO, "\n", 1);
-		return (0);
-	}
+	update_exit_status(shell, status);
+	if (shell->exit_status == 130)
+		write(STDOUT_FILENO, "\n", 1);
 	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-	{
-		shell->exit_status = 1;
 		return (0);
-	}
 	return (1);
 }
 
@@ -44,7 +37,7 @@ static int	prepare_one_heredoc(t_shell *shell, t_redir *redir, int number)
 		shell->exit_status = 1;
 		return (0);
 	}
-	pid = run_heredoc_child(shell, redir, write_fd);
+	pid = run_heredoc_child(shell, redir, path, write_fd);
 	close(write_fd);
 	if (pid == -1)
 		return (remove_heredoc_file(path), 0);

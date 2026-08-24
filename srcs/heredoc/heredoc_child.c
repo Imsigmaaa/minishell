@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 00:08:29 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/23 17:53:07 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/24 22:10:59 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ static	int	write_heredoc(t_shell *shell, t_redir *redir, int fd)
 	while (1)
 	{
 		line = readline("> ");
+		if (g_signal == SIGINT)
+		{
+			free(line);
+			return (0);
+		}
 		if (!line)
 		{
 			print_heredoc_warning(redir->target);
@@ -51,29 +56,36 @@ static	int	write_heredoc(t_shell *shell, t_redir *redir, int fd)
 	return (1);
 }
 
-static void	heredoc_child(t_shell *shell, t_redir *redir, int fd)
+static void	heredoc_child(t_shell *shell, t_redir *redir, int fd, char *path)
 {
 	int	result;
 
 	if (!init_heredoc_signals())
 	{
 		close(fd);
+		free(path);
 		child_exit(shell, 1);
 	}
 	result = write_heredoc(shell, redir, fd);
 	close(fd);
 	if (!result)
-		child_exit(shell, 1);
+	{
+		free(path);
+		if (g_signal == SIGINT)
+			child_exit(shell,130);
+		child_exit(shell,1);
+	}
+	free(path);
 	child_exit(shell, 0);
 }
 
-pid_t	run_heredoc_child(t_shell *shell, t_redir *redir, int fd)
+pid_t	run_heredoc_child(t_shell *shell, t_redir *redir, char *path, int fd)
 {
 	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
-		heredoc_child(shell, redir, fd);
+		heredoc_child(shell, redir, fd, path);
 	if (pid == -1)
 	{
 		perror("fork");
