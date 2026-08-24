@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/30 15:17:37 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/22 02:49:03 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 18:05:24 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	close_free_and_exit_child(t_shell *shell, t_exec *exec)
 	close_created_fd(exec, exec->cmd_count - 1);
 	close_all_heredoc_fds(shell);
 	free_exec(exec);
-	exit(1);
+	child_exit(shell, 1);
 }
 
 static void	exec_child(t_shell *shell, t_cmd *cmd, int i, t_exec *exec)
@@ -55,17 +55,16 @@ static void	exec_child(t_shell *shell, t_cmd *cmd, int i, t_exec *exec)
 	if (!cmd->argv || !cmd->argv[0])
 	{
 		free_exec(exec);
-		exit(0);
+		child_exit(shell, 1);
 	}
 	if (is_builtin(cmd))
 	{
 		status = exec_builtin(shell, cmd);
 		free_exec(exec);
-		exit(status);
+		child_exit(shell, status);
 	}
 	free_exec(exec);
-	exec_cmd(cmd, shell->env);
-	exit(126);
+	child_exit(shell, exec_cmd(cmd, shell->env));
 }
 
 static	int	fork_children(t_shell *shell, t_exec *exec)

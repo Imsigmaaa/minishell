@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 00:08:29 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/23 02:20:13 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 17:53:07 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,13 @@ static void	heredoc_child(t_shell *shell, t_redir *redir, int fd)
 	if (!init_heredoc_signals())
 	{
 		close(fd);
-		exit(1);
+		child_exit(shell, 1);
 	}
 	result = write_heredoc(shell, redir, fd);
 	close(fd);
 	if (!result)
-		exit(1);
-	exit(0);
+		child_exit(shell, 1);
+	child_exit(shell, 0);
 }
 
 pid_t	run_heredoc_child(t_shell *shell, t_redir *redir, int fd)

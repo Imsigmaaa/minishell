@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 02:31:49 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/19 09:06:37 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 18:24:22 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,10 @@ void	wait_all_children(t_shell *shell, t_exec *exec, int count)
 		}
 		i ++;
 	}
+}
+
+void	child_exit(t_shell *shell, int status)
+{
+	cleanup_shell(shell);
+	exit(status);
 }

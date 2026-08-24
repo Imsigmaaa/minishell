@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execv.c                                            :+:      :+:    :+:   */
+/*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 00:22:53 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/19 03:12:12 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 18:24:48 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	executor(t_shell *shell)
 	{
 		close_all_heredoc_fds(shell);
 		init_interactive_signals();
-			return ;
+		return ;
 	}
 	init_interactive_signals();
 	if (count_cmds(shell->cmds) == 1)

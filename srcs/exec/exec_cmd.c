@@ -6,7 +6,7 @@
 /*   By: xingchen <xingchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 16:15:51 by xingchen          #+#    #+#             */
-/*   Updated: 2026/08/17 23:41:01 by xingchen         ###   ########.fr       */
+/*   Updated: 2026/08/23 18:02:39 by xingchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	print_exec_error(t_cmd *cmd, int err_code)
 		print_cmd_error(cmd, ": command not found\n");
 }
 
-void	exec_cmd(t_cmd *cmds, t_env *env)
+int	exec_cmd(t_cmd *cmds, t_env *env)
 {
 	char	**envp;
 	char	*path;
@@ -51,18 +51,18 @@ void	exec_cmd(t_cmd *cmds, t_env *env)
 	if (!path)
 	{
 		print_exec_error(cmds, err_code);
-		exit(err_code);
+		return (err_code);
 	}
 	envp = env_to_array(env);
 	if (!envp)
 	{
 		free(path);
 		perror("malloc");
-		exit(1);
+		return (1);
 	}
 	execve(path, cmds->argv, envp);
 	perror("execve");
 	env_free_array(envp);
 	free(path);
-	exit(126);
+	return (126);
 }
