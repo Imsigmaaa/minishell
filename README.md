@@ -172,6 +172,25 @@ type ls
 Note: `type` is itself a Bash builtin, so this check must be performed in Bash, not in Minishell.  
 If there is any doubt about whether a command is a Bash builtin or an external executable, exit Minishell and use `type <command>` in Bash to verify it.
 
+### Check PATH search order
+
+Check that directories in `$PATH` are searched from left to right.
+The shell searches for the command in each PATH directory. When it finds the first matching executable, it stops searching and executes it.
+
+```bash
+mkdir -p /tmp/path1 /tmp/path2
+printf '#!/bin/sh\necho FIRST\n' > /tmp/path1/mycmd
+printf '#!/bin/sh\necho SECOND\n' > /tmp/path2/mycmd
+chmod +x /tmp/path1/mycmd /tmp/path2/mycmd
+
+export PATH=/tmp/path1:/tmp/path2
+mycmd
+# FIRST
+
+export PATH=/tmp/path2:/tmp/path1
+mycmd
+# SECOND
+```
 ## Technical choices
 
 - The environment is stored in a linked list and converted to `char **` for `execve`.
