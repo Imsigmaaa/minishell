@@ -34,10 +34,7 @@ static	int	write_heredoc(t_shell *shell, t_redir *redir, int fd)
 	{
 		line = readline("> ");
 		if (g_signal == SIGINT)
-		{
-			free(line);
-			return (0);
-		}
+			return (free(line), 0);
 		if (!line)
 		{
 			print_heredoc_warning(redir->target);
@@ -72,8 +69,8 @@ static void	heredoc_child(t_shell *shell, t_redir *redir, int fd, char *path)
 	{
 		free(path);
 		if (g_signal == SIGINT)
-			child_exit(shell,130);
-		child_exit(shell,1);
+			child_exit(shell, 130);
+		child_exit(shell, 1);
 	}
 	free(path);
 	child_exit(shell, 0);

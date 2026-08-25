@@ -184,7 +184,8 @@ int			open_heredoc_read(t_shell *shell, t_redir *redir,
 				char *path);
 void		remove_heredoc_file(char *path);
 void		print_heredoc_warning(char *delimiter);
-pid_t		run_heredoc_child(t_shell *shell, t_redir *redir, char *path, int fd);
+pid_t		run_heredoc_child(t_shell *shell, t_redir *redir,
+				char *path, int fd);
 int			wait_heredoc_child(pid_t pid, int *status);
 
 /* Builtins */

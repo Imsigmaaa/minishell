@@ -66,4 +66,3 @@ int	init_heredoc_signals(void)
 		return (perror("sigaction"), 0);
 	return (1);
 }
-
